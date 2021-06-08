@@ -28,4 +28,10 @@ export class Level {
     getActor(name: string): Actor {
         return this.actors[name];
     }
+
+    tick() {
+        for (let name in this.actors) {
+            this.actors[name].tick();
+        }
+    }
 }

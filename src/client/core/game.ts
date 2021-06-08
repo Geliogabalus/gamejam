@@ -1,6 +1,6 @@
+import { Spawn } from "../td/spawn";
 import * as THREE from "three"
 import { Renderer } from "three";
-import { isConstructorDeclaration } from "typescript";
 import { Actor } from "./actor";
 import { Level } from "./level";
 
@@ -20,28 +20,48 @@ export class Game {
 
         switch (settings.cameraType) {
             case 'orthographic': 
-                this.camera = new THREE.OrthographicCamera(-10, 10, 10, -10, 1, 100)
+                this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10)
+                break;
             case 'perspective':
                 this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+                break;
             default:
                 this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+                break;
         } 
     }
 
     public init() {
-        const geometry: THREE.BoxGeometry = new THREE.BoxGeometry()
-        const material: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true })
+        const grassTexture = new THREE.TextureLoader().load('assets/grass.jpg');
+        /*const cube: Actor = new Actor('cube')
+        cube.mesh = new THREE.Mesh(geometry, material)*/
+        const background: Actor = new Actor('background', this.level)
+        const backgroundMaterial: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({ visible: true, map: grassTexture })
+        const geometryPlane: THREE.PlaneGeometry = new THREE.PlaneGeometry()
+        background.mesh = new THREE.Mesh(geometryPlane, backgroundMaterial);
+        background.mesh.scale.x = 6;
+        background.mesh.scale.y = 3;
+        this.level.createActor(background);
 
-        const cube: Actor = new Actor('cube')
-        cube.mesh = new THREE.Mesh(geometry, material)
+        const portalTexture = new THREE.TextureLoader().load('assets/portal.png');
+        /*const cube: Actor = new Actor('cube')
+        cube.mesh = new THREE.Mesh(geometry, material)*/
+        const portal: Spawn = new Spawn('portal', this.level)
+        const portalMaterial: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({ visible: true, map: portalTexture, transparent: true })
+        portal.mesh = new THREE.Mesh(geometryPlane, portalMaterial);
+        portal.mesh.scale.x = 0.5;
+        portal.mesh.scale.y = 0.5;
+        portal.mesh.translateX(2.7);
+        this.level.createActor(portal);
 
-        this.level.createActor(cube);
-
+        portal.activate();
         this.camera.position.z = 2
     }
 
     tick(renderer: Renderer) {
-        this.level.getActor('cube').addRotation(new THREE.Vector3(0.01, 0.01, 0))
+        this.level.tick();
+        
+        //this.level.getActor('cube').addRotation(new THREE.Vector3(0, 0, 0.5))
 
         renderer.render(this.scene, this.camera);
     }
