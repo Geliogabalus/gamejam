@@ -1,41 +1,41 @@
-import { Mesh } from "three";
-import { Level } from "./level";
+import { Mesh } from 'three';
+// eslint-disable-next-line import/no-cycle
+import { Level } from './level';
 
 export class Actor {
-    public readonly name: string;
-    level: Level;
-    mesh: THREE.Mesh;
+  public readonly name: string;
 
-    
-    constructor(name: string, level: Level) {
-        this.name = name;
-        this.level = level;
-        this.mesh = new Mesh();
-    }
+  level: Level;
 
-    addRotation(rotation: THREE.Vector3) {
-        if (this.mesh) {
-            this.mesh.rotation.x += rotation.x
-            this.mesh.rotation.y += rotation.y
-            this.mesh.rotation.y += rotation.y
-        } 
-    }
+  mesh: THREE.Mesh;
 
-    translate(translate: THREE.Vector3) {
-        if (this.mesh) {
-            this.mesh.translateX(translate.x)
-            this.mesh.translateZ(translate.y)
-            this.mesh.translateY(translate.z)
-        } 
-    }
+  constructor(name: string, level: Level) {
+    this.name = name;
+    this.level = level;
+    this.mesh = new Mesh();
+  }
 
-    setScale(scale: THREE.Vector3) {
-        if (this.mesh) {
-            this.mesh.scale.set(scale.x, scale.y, scale.z);
-        } 
+  addRotation(rotation: THREE.Vector3) {
+    if (this.mesh) {
+      this.mesh.rotation.x += rotation.x;
+      this.mesh.rotation.y += rotation.y;
+      this.mesh.rotation.y += rotation.y;
     }
+  }
 
-    tick() {
-        
+  translate(translate: THREE.Vector3) {
+    if (this.mesh) {
+      this.mesh.translateX(translate.x);
+      this.mesh.translateZ(translate.y);
+      this.mesh.translateY(translate.z);
     }
+  }
+
+  setScale(scale: THREE.Vector3) {
+    if (this.mesh) {
+      this.mesh.scale.set(scale.x, scale.y, scale.z);
+    }
+  }
+
+  tick() {}
 }

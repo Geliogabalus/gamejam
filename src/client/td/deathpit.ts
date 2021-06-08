@@ -1,4 +1,4 @@
-import { Actor } from "../core/actor";
+import { Actor } from '../core/actor';
 
 export class Deathpit extends Actor {
 
