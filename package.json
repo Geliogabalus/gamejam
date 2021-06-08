@@ -1,0 +1,21 @@
+{
+  "name": "gamejam",
+  "version": "1.0.0",
+  "description": "Basic three.js engine bindings",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -p ./src/server && tsc -p ./src/client && copyfiles index.html dist/client/",
+    "run": "node dist/server/server.js",
+    "build-run": "npm run build && npm run run"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "three": "^0.129.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.12",
+    "@types/three": "^0.129.1"
+  }
+}

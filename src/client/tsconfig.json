@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "ES6",
+        "outDir": "../../dist/client",
+        "baseUrl": ".",
+        "paths": {
+            "/build/three.module.js": ["d:/Projects/Gamejam/node_modules/@types/three/index"]
+        },
+        "typeRoots": [ "./types", "./node_modules/@types"],
+        "moduleResolution": "node"
+    },
+    "include": [
+        "**/*.ts"
+    ],
+    "exclude": ["node_modules", "types"]
+}
