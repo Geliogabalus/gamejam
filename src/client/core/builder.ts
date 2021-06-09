@@ -1,5 +1,5 @@
-import * as THREE from "three";
-import { Mesh, Sprite } from "three";
+import * as THREE from 'three';
+import { Mesh, Sprite } from 'three';
 
 export interface BuilderOptions {
   texturePath: string

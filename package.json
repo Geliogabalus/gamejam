@@ -13,7 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/dat.gui": "^0.7.6",
     "express": "^4.17.1",
+    "fairygui-three": "^0.7.0",
     "three": "^0.129.0",
     "typescript": "^4.3.2"
   },

@@ -1,9 +1,9 @@
-import { Deathpit } from '../td/deathpit';
 import * as THREE from 'three';
 import { OrthographicCamera, Renderer } from 'three';
+import * as fgui from 'fairygui-three';
+import { Deathpit } from '../td/deathpit';
 import { Spawn } from '../td/spawn';
 import { Actor2D } from './2d-actor';
-import { Actor } from './actor';
 import { Level } from './level';
 
 export interface GameSettings {
@@ -22,11 +22,18 @@ export class Game {
 
   renderer: Renderer;
 
+  private gui: fgui.GComponent = new fgui.GComponent();
+
+  readonly settings: { [key: string]: any } = {
+    minionSpeed: 1,
+  };
+
   constructor(settings: GameSettings) {
-    let aspectRatio = window.innerWidth / window.innerHeight;
+    const aspectRatio = window.innerWidth / window.innerHeight;
     switch (settings.cameraType) {
       case 'orthographic':
-        this.camera = new THREE.OrthographicCamera(-aspectRatio * this.viewSize / 2, aspectRatio * this.viewSize / 2, this.viewSize / 2, -this.viewSize / 2, 0.1, 1000);
+        this.camera = new THREE.OrthographicCamera((-aspectRatio * this.viewSize) / 2, (aspectRatio * this.viewSize) / 2,
+          this.viewSize / 2, -this.viewSize / 2, 0.1, 1000);
         break;
       case 'perspective':
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -37,20 +44,29 @@ export class Game {
     }
     this.renderer = settings.renderer;
     this.scene = new THREE.Scene();
-    this.level = new Level(this.scene, this.camera);
-    
-    let onWindowResize = () => {
-      let aspect = window.innerWidth / window.innerHeight;
-      
+    this.level = new Level(this.scene, this.camera, this.settings);
+
+    const onWindowResize = () => {
+      const aspect = window.innerWidth / window.innerHeight;
+
       if (this.camera instanceof OrthographicCamera) {
-        this.camera.left = -aspect * this.viewSize / 2
-        this.camera.right = aspect * this.viewSize / 2
+        this.camera.left = (-aspect * this.viewSize) / 2;
+        this.camera.right = (aspect * this.viewSize) / 2;
         this.camera.updateProjectionMatrix();
       }
-  
+
       this.renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-    window.addEventListener( 'resize', onWindowResize );
+    };
+    window.addEventListener('resize', onWindowResize);
+
+    // Не работает
+    fgui.Stage.init(this.renderer);
+    fgui.Stage.scene = this.scene;
+    fgui.UIPackage.loadPackage('assets/gui').then(() => {
+      this.gui = fgui.UIPackage.createObject('Package', 'Main').asCom;
+      this.gui.makeFullScreen();
+      fgui.GRoot.inst.addChild(this.gui);
+    });
   }
 
   public init() {
@@ -74,11 +90,15 @@ export class Game {
     this.level.createActor(pit);
 
     portal.activate();
+
+    // const minionsFolder = this.gui.addFolder('Minions');
+    // minionsFolder.add(this.settings, 'minionSpeed').name('Minion speed').listen();
+    // minionsFolder.open();
   }
 
-  tick(renderer: Renderer) {
-    this.level.tick();
-
+  tick(renderer: Renderer, delta: number) {
+    this.level.tick(delta);
+    fgui.Stage.update();
     // this.level.getActor('cube').addRotation(new THREE.Vector3(0, 0, 0.5))
 
     renderer.render(this.scene, this.camera);

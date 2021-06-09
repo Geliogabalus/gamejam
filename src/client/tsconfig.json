@@ -5,7 +5,11 @@
         "baseUrl": ".",
         "moduleResolution": "node",
         "allowJs": true,
-        "strict": true
+        "strict": true,
+        "paths": {
+            "gui": ["../../node_modules/@types/dat.gui"],
+            "three": ["../../node_modules/@types/three"]
+        },
     },
     "include": [
         "**/*.ts"

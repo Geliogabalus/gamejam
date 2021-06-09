@@ -1,4 +1,4 @@
-import { Mesh, Object3D } from 'three';
+import { Object3D } from 'three';
 // eslint-disable-next-line import/no-cycle
 import { Level } from './level';
 
@@ -37,5 +37,6 @@ export class Actor {
     }
   }
 
-  tick() {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  tick(delta: number) { }
 }

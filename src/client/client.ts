@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Game } from './core/game';
 
 const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({ antialias: true });
+const clock = new THREE.Clock();
 let game: Game;
 
 const init = () => {
@@ -11,16 +12,14 @@ const init = () => {
 
   game = new Game({
     cameraType: 'orthographic',
-    renderer: renderer
+    renderer,
   });
   game.init();
-};
 
-const animate = () => {
-  requestAnimationFrame(animate);
-
-  game.tick(renderer);
+  renderer.setAnimationLoop(() => {
+    const delta = clock.getDelta();
+    game.tick(renderer, delta);
+  });
 };
 
 init();
-animate();

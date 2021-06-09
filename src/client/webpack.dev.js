@@ -17,6 +17,9 @@ module.exports = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
+        alias: {
+            gui: path.resolve(__dirname, '../../node_modules/three/examples/jsm/libs/dat.gui.module')
+        }
     },
     output: {
         filename: 'bundle.js',

@@ -1,16 +1,22 @@
-import { Camera, Raycaster, Scene, Vector2, Vector3 } from 'three';
+import {
+  Camera, Raycaster, Scene, Vector2,
+} from 'three';
 // eslint-disable-next-line import/no-cycle
 import { Actor } from './actor';
 
 export class Level {
   private scene: Scene;
+
   private camera: Camera;
+
+  readonly settigs: { [key: string]: any };
 
   private actors: { [key: string]: Actor } = {};
 
-  constructor(scene: Scene, camera: Camera) {
+  constructor(scene: Scene, camera: Camera, settings: { [key: string]: any }) {
     this.scene = scene;
     this.camera = camera;
+    this.settigs = settings;
   }
 
   createActor(actor: Actor) {
@@ -39,9 +45,9 @@ export class Level {
     return raycaster;
   }
 
-  tick() {
+  tick(delta: number) {
     Object.values(this.actors).forEach((actor) => {
-      actor.tick();
+      actor.tick(delta);
     });
   }
 }
