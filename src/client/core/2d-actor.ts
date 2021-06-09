@@ -1,8 +1,7 @@
-import { Mesh, BufferGeometry, Material, Vector3 } from "three";
-import { Actor } from "./actor";
+import { Actor } from './actor';
 
 export class Actor2D extends Actor {
-    /*constructor(name: string) {
+  /* constructor(name: string) {
         super();
-    }*/
+    } */
 }
