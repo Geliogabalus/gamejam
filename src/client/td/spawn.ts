@@ -1,12 +1,12 @@
-import { Actor } from '../core/actor';
+import { Actor2D } from "../core/2d-actor";
 import { Minion } from './minion';
 
-export class Spawn extends Actor {
+export class Spawn extends Actor2D {
   timer: any;
 
   activated: boolean = false;
 
-  interval: number = 2000;
+  interval: number = 3000;
 
   activate() {
     this.activated = true;
@@ -14,7 +14,7 @@ export class Spawn extends Actor {
     setInterval(() => {
       const minion = new Minion(`minion${Math.random()}`, this.level);
       if (minion.mesh) {
-        minion.mesh.position.set(this.mesh.position.x - this.mesh.scale.x, this.mesh.position.y, this.mesh.position.z);
+        minion.mesh.position.set(this.mesh.position.x, this.mesh.position.y - 0.1, this.mesh.position.z);
       }
       this.level.createActor(minion);
     }, this.interval);
