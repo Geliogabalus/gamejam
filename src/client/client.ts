@@ -1,15 +1,17 @@
 import * as THREE from 'three';
 import { Game } from './core/game';
 
-const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
+const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({ antialias: true });
 let game: Game;
 
 const init = () => {
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
   game = new Game({
-    cameraType: 'perspective',
+    cameraType: 'orthographic',
+    renderer: renderer
   });
   game.init();
 };

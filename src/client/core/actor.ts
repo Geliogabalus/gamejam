@@ -1,4 +1,4 @@
-import { Mesh } from 'three';
+import { Mesh, Object3D } from 'three';
 // eslint-disable-next-line import/no-cycle
 import { Level } from './level';
 
@@ -7,33 +7,33 @@ export class Actor {
 
   level: Level;
 
-  mesh: THREE.Mesh;
+  sceneObject: THREE.Object3D;
 
   constructor(name: string, level: Level) {
     this.name = name;
     this.level = level;
-    this.mesh = new Mesh();
+    this.sceneObject = new Object3D();
   }
 
   addRotation(rotation: THREE.Vector3) {
-    if (this.mesh) {
-      this.mesh.rotation.x += rotation.x;
-      this.mesh.rotation.y += rotation.y;
-      this.mesh.rotation.y += rotation.y;
+    if (this.sceneObject) {
+      this.sceneObject.rotation.x += rotation.x;
+      this.sceneObject.rotation.y += rotation.y;
+      this.sceneObject.rotation.y += rotation.y;
     }
   }
 
   translate(translate: THREE.Vector3) {
-    if (this.mesh) {
-      this.mesh.translateX(translate.x);
-      this.mesh.translateZ(translate.y);
-      this.mesh.translateY(translate.z);
+    if (this.sceneObject) {
+      this.sceneObject.translateX(translate.x);
+      this.sceneObject.translateZ(translate.y);
+      this.sceneObject.translateY(translate.z);
     }
   }
 
   setScale(scale: THREE.Vector3) {
-    if (this.mesh) {
-      this.mesh.scale.set(scale.x, scale.y, scale.z);
+    if (this.sceneObject) {
+      this.sceneObject.scale.set(scale.x, scale.y, scale.z);
     }
   }
 

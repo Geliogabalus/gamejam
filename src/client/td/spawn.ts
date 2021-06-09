@@ -13,8 +13,8 @@ export class Spawn extends Actor2D {
 
     setInterval(() => {
       const minion = new Minion(`minion${Math.random()}`, this.level);
-      if (minion.mesh) {
-        minion.mesh.position.set(this.mesh.position.x, this.mesh.position.y - 0.1, this.mesh.position.z);
+      if (minion.sceneObject) {
+        minion.sceneObject.position.set(this.sceneObject.position.x, this.sceneObject.position.y - 0.1, this.sceneObject.position.z);
       }
       this.level.createActor(minion);
     }, this.interval);
