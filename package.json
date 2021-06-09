@@ -4,8 +4,8 @@
   "description": "Basic three.js engine bindings",
   "main": "index.js",
   "scripts": {
-    "dev": "copyfiles index.html dist/client/ && webpack serve --config ./src/client/webpack.dev.js",
-    "build": "webpack --config ./src/client/webpack.prod.js && copyfiles index.html dist/client/",
+    "dev": "copyfiles \"assets/**/*\" \"dist/client\" && copyfiles index.html dist/client/ && webpack serve --config ./src/client/webpack.dev.js",
+    "build": "copyfiles \"assets/**/*\" \"dist/client\" && copyfiles index.html dist/client/ && webpack --config ./src/client/webpack.prod.js",
     "start": "node dist/server/server.js",
     "build-run": "npm run build && npm run start",
     "lint.client": "eslint --config src/client/.eslintrc.js \"src/client/**/*.ts\""
