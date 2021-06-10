@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { OrthographicCamera, Renderer } from 'three';
-import * as fgui from 'fairygui-three';
 import { Deathpit } from '../td/deathpit';
 import { Spawn } from '../td/spawn';
 import { Actor2D } from './2d-actor';
@@ -21,8 +20,6 @@ export class Game {
   readonly viewSize = 3;
 
   renderer: Renderer;
-
-  private gui: fgui.GComponent = new fgui.GComponent();
 
   readonly settings: { [key: string]: any } = {
     minionSpeed: 1,
@@ -58,15 +55,6 @@ export class Game {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
     };
     window.addEventListener('resize', onWindowResize);
-
-    // Не работает
-    fgui.Stage.init(this.renderer);
-    fgui.Stage.scene = this.scene;
-    fgui.UIPackage.loadPackage('assets/gui').then(() => {
-      this.gui = fgui.UIPackage.createObject('Package', 'Main').asCom;
-      this.gui.makeFullScreen();
-      fgui.GRoot.inst.addChild(this.gui);
-    });
   }
 
   public init() {
@@ -98,7 +86,6 @@ export class Game {
 
   tick(renderer: Renderer, delta: number) {
     this.level.tick(delta);
-    fgui.Stage.update();
     // this.level.getActor('cube').addRotation(new THREE.Vector3(0, 0, 0.5))
 
     renderer.render(this.scene, this.camera);

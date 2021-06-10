@@ -1,8 +1,9 @@
 import * as THREE from 'three';
+import { Timer } from './core/timer';
 import { Game } from './core/game';
 
 const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({ antialias: true });
-const clock = new THREE.Clock();
+const timer = new Timer();
 let game: Game;
 
 const init = () => {
@@ -17,7 +18,8 @@ const init = () => {
   game.init();
 
   renderer.setAnimationLoop(() => {
-    const delta = clock.getDelta();
+    timer.update();
+    const delta = timer.getDelta();
     game.tick(renderer, delta);
   });
 };
