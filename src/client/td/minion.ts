@@ -10,17 +10,19 @@ export class Minion extends Actor2D {
   }
 
   tick(delta: number) {
-    this.sceneObject.translateX(-this.game.settings.minionSpeed * delta);
+    this.sceneObject.translateX(-this.game.state.minionSpeed * delta);
 
     const deathpitSprite = this.game.currentLevel.getActor('deathpit').sceneObject;
     if (deathpitSprite instanceof Sprite) {
       if (this.checkCollision(deathpitSprite)) {
         this.game.currentLevel.destroyActor(this);
+        this.game.state.destroyedMinionsCount += 1;
       }
     }
   }
 
   onClick() {
     this.game.currentLevel.destroyActor(this);
+    this.game.state.destroyedMinionsCount += 1;
   }
 }

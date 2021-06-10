@@ -1,9 +1,13 @@
 import * as THREE from 'three';
-import { Camera, OrthographicCamera, Renderer } from 'three';
+import {
+  Camera, OrthographicCamera, Renderer, Vector2,
+} from 'three';
 import { Deathpit } from '../td/deathpit';
 import { Spawn } from '../td/spawn';
 import { Actor2D } from './actors/actor-2d';
 import { Controls } from './controls/controls';
+import { Gui } from './gui/gui';
+import { Label } from './gui/label';
 import { Level } from './level';
 
 export interface GameSettings {
@@ -24,8 +28,11 @@ export class Game {
 
   private controls: Controls;
 
-  readonly settings: { [key: string]: any } = {
+  private gui: Gui;
+
+  readonly state: { [key: string]: any } = {
     minionSpeed: 1,
+    destroyedMinionsCount: 0,
   };
 
   constructor(settings: GameSettings) {
@@ -46,6 +53,8 @@ export class Game {
     this.scene = new THREE.Scene();
     this.level = new Level(this);
     this.controls = new Controls(this);
+    this.gui = new Gui({ width: 100, height: 50 });
+    document.body.appendChild(this.gui.dom);
 
     const onWindowResize = () => {
       const aspect = window.innerWidth / window.innerHeight;
@@ -83,6 +92,11 @@ export class Game {
 
     portal.activate();
 
+    const label = new Label('minionsDestroyed', new Vector2(100, 50),
+      () => `Уничтожено миньонов: ${this.state.destroyedMinionsCount}`,
+      `width: 1500px;
+       font-size: 100px`);
+    this.gui.addElement(label);
     // const minionsFolder = this.gui.addFolder('Minions');
     // minionsFolder.add(this.settings, 'minionSpeed').name('Minion speed').listen();
     // minionsFolder.open();
@@ -90,6 +104,7 @@ export class Game {
 
   tick(renderer: Renderer, delta: number) {
     this.level.tick(delta);
+    this.gui.update();
     // this.level.getActor('cube').addRotation(new THREE.Vector3(0, 0, 0.5))
 
     renderer.render(this.scene, this.camera);
