@@ -1,8 +1,9 @@
 import * as THREE from 'three';
-import { OrthographicCamera, Renderer } from 'three';
+import { Camera, OrthographicCamera, Renderer } from 'three';
 import { Deathpit } from '../td/deathpit';
 import { Spawn } from '../td/spawn';
-import { Actor2D } from './2d-actor';
+import { Actor2D } from './actors/actor-2d';
+import { Controls } from './controls/controls';
 import { Level } from './level';
 
 export interface GameSettings {
@@ -11,7 +12,7 @@ export interface GameSettings {
 }
 
 export class Game {
-  private scene: THREE.Scene;
+  scene: THREE.Scene;
 
   private camera: THREE.Camera;
 
@@ -20,6 +21,8 @@ export class Game {
   readonly viewSize = 3;
 
   renderer: Renderer;
+
+  private controls: Controls;
 
   readonly settings: { [key: string]: any } = {
     minionSpeed: 1,
@@ -41,7 +44,8 @@ export class Game {
     }
     this.renderer = settings.renderer;
     this.scene = new THREE.Scene();
-    this.level = new Level(this.scene, this.camera, this.settings);
+    this.level = new Level(this);
+    this.controls = new Controls(this);
 
     const onWindowResize = () => {
       const aspect = window.innerWidth / window.innerHeight;
@@ -60,18 +64,18 @@ export class Game {
   public init() {
     this.camera.position.z = 2;
 
-    const background: Actor2D = new Actor2D('background', this.level, 'assets/grass.jpg');
+    const background: Actor2D = new Actor2D('background', this, 'assets/grass.jpg');
     background.sceneObject.scale.x = 6;
     background.sceneObject.scale.y = 3;
     this.level.createActor(background);
 
-    const portal: Spawn = new Spawn('portal', this.level, 'assets/portal.png');
+    const portal: Spawn = new Spawn('portal', this, 'assets/portal.png');
     portal.sceneObject.scale.x = 0.5;
     portal.sceneObject.scale.y = 0.5;
     portal.sceneObject.translateX(2.7);
     this.level.createActor(portal);
 
-    const pit: Deathpit = new Deathpit('deathpit', this.level, 'assets/hellhole.png');
+    const pit: Deathpit = new Deathpit('deathpit', this, 'assets/hellhole.png');
     pit.sceneObject.scale.x = 0.5;
     pit.sceneObject.scale.y = 0.5;
     pit.sceneObject.translateX(-2.7);
@@ -89,5 +93,13 @@ export class Game {
     // this.level.getActor('cube').addRotation(new THREE.Vector3(0, 0, 0.5))
 
     renderer.render(this.scene, this.camera);
+  }
+
+  public get currentCamera() : Camera {
+    return this.camera;
+  }
+
+  public get currentLevel() : Level {
+    return this.level;
   }
 }

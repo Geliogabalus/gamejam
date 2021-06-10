@@ -1,35 +1,29 @@
 import {
-  Camera, Raycaster, Scene, Vector2,
+  Object3D,
 } from 'three';
-// eslint-disable-next-line import/no-cycle
-import { Actor } from './actor';
+import type { Actor } from './actors/actor';
+import type { Game } from './game';
 
 export class Level {
-  private scene: Scene;
-
-  private camera: Camera;
-
-  readonly settigs: { [key: string]: any };
-
   private actors: { [key: string]: Actor } = {};
 
-  constructor(scene: Scene, camera: Camera, settings: { [key: string]: any }) {
-    this.scene = scene;
-    this.camera = camera;
-    this.settigs = settings;
+  private game: Game;
+
+  constructor(game: Game) {
+    this.game = game;
   }
 
   createActor(actor: Actor) {
     this.actors[actor.name] = actor;
 
     if (actor.sceneObject) {
-      this.scene.add(actor.sceneObject);
+      this.game.scene.add(actor.sceneObject);
     }
   }
 
   destroyActor(actor: Actor) {
     if (actor.sceneObject) {
-      this.scene.remove(actor.sceneObject);
+      this.game.scene.remove(actor.sceneObject);
     }
 
     delete this.actors[actor.name];
@@ -39,15 +33,25 @@ export class Level {
     return this.actors[name];
   }
 
-  getRaycaster(): Raycaster {
-    const raycaster = new Raycaster();
-    raycaster.setFromCamera(new Vector2(), this.camera);
-    return raycaster;
-  }
-
   tick(delta: number) {
     Object.values(this.actors).forEach((actor) => {
       actor.tick(delta);
     });
+  }
+
+  public get allObjects() : Object3D[] {
+    const result: Object3D[] = [];
+    Object.values(this.actors).forEach((actor) => {
+      result.push(actor.sceneObject);
+    });
+    return result;
+  }
+
+  public get allActors() : Actor[] {
+    const result: Actor[] = [];
+    Object.values(this.actors).forEach((actor) => {
+      result.push(actor);
+    });
+    return result;
   }
 }

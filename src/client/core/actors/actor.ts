@@ -1,17 +1,18 @@
 import { Object3D } from 'three';
-// eslint-disable-next-line import/no-cycle
-import { Level } from './level';
+import type { Game } from '../game';
 
 export class Actor {
   public readonly name: string;
 
-  level: Level;
+  isHovered: boolean = false;
+
+  game: Game;
 
   sceneObject: THREE.Object3D;
 
-  constructor(name: string, level: Level) {
+  constructor(name: string, game: Game) {
     this.name = name;
-    this.level = level;
+    this.game = game;
     this.sceneObject = new Object3D();
   }
 
@@ -39,4 +40,14 @@ export class Actor {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tick(delta: number) { }
+
+  public setHovered(v: boolean) {
+    this.isHovered = v;
+  }
+
+  onHoverStart() {}
+
+  onHoverEnd() {}
+
+  onClick() {}
 }

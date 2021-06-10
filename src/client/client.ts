@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Timer } from './core/timer';
+import { Timer } from './core/misc/timer';
 import { Game } from './core/game';
 
 const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({ antialias: true });

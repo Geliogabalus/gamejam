@@ -1,13 +1,13 @@
 import { Sprite, Vector3 } from 'three';
+import { Builder } from '../misc/builder';
+import type { Game } from '../game';
 import { Actor } from './actor';
-import { Builder } from './builder';
-import { Level } from './level';
 
 export class Actor2D extends Actor {
   sceneObject: Sprite;
 
-  constructor(name: string, level: Level, texturePath: string) {
-    super(name, level);
+  constructor(name: string, game: Game, texturePath: string) {
+    super(name, game);
 
     this.sceneObject = Builder.createSprite({ texturePath });
   }

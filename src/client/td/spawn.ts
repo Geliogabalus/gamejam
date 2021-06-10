@@ -1,4 +1,5 @@
-import { Actor2D } from '../core/2d-actor';
+import { Color } from 'three';
+import { Actor2D } from '../core/actors/actor-2d';
 import { Minion } from './minion';
 
 export class Spawn extends Actor2D {
@@ -15,9 +16,13 @@ export class Spawn extends Actor2D {
   }
 
   spawn() {
-    const minion = new Minion(`minion${Math.random()}`, this.level);
-    minion.sceneObject.position.set(this.sceneObject.position.x, this.sceneObject.position.y - 0.1, this.sceneObject.position.z);
-    this.level.createActor(minion);
+    const minion = new Minion(`minion${Math.random()}`, this.game);
+    minion.sceneObject.position.set(
+      this.sceneObject.position.x,
+      this.sceneObject.position.y - 0.1,
+      this.sceneObject.position.z + 0.001,
+    );
+    this.game.currentLevel.createActor(minion);
   }
 
   tick(delta: number) {
@@ -28,5 +33,13 @@ export class Spawn extends Actor2D {
         this.currentSpan = 0;
       }
     }
+  }
+
+  onHoverStart() {
+    this.sceneObject.material.color = new Color(0xffff00);
+  }
+
+  onHoverEnd() {
+    this.sceneObject.material.color = new Color(0xffffff);
   }
 }
