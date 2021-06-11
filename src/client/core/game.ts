@@ -1,13 +1,10 @@
 import * as THREE from 'three';
 import {
-  Camera, OrthographicCamera, Renderer, Vector2,
+  Camera, Renderer,
 } from 'three';
-import { Deathpit } from '../td/deathpit';
-import { Spawn } from '../td/spawn';
 import { Actor2D } from './actors/actor-2d';
 import { Controls } from './controls/controls';
 import { Gui } from './gui/gui';
-import { Label } from './gui/label';
 import { Level } from './level';
 
 export interface GameSettings {
@@ -22,7 +19,9 @@ export class Game {
 
   private level: Level;
 
-  readonly viewSize = 3;
+  readonly width = 160;
+
+  readonly height = 90;
 
   renderer: Renderer;
 
@@ -31,16 +30,14 @@ export class Game {
   private gui: Gui;
 
   readonly state: { [key: string]: any } = {
-    minionSpeed: 1,
-    destroyedMinionsCount: 0,
   };
 
   constructor(settings: GameSettings) {
-    const aspectRatio = window.innerWidth / window.innerHeight;
+    const aspectRatio = this.width / this.height;
     switch (settings.cameraType) {
       case 'orthographic':
-        this.camera = new THREE.OrthographicCamera((-aspectRatio * this.viewSize) / 2, (aspectRatio * this.viewSize) / 2,
-          this.viewSize / 2, -this.viewSize / 2, 0.1, 1000);
+        this.camera = new THREE.OrthographicCamera((-aspectRatio * this.height) / 2, (aspectRatio * this.height) / 2,
+          this.height / 2, -this.height / 2, 0.1, 1000);
         break;
       case 'perspective':
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -56,7 +53,8 @@ export class Game {
     this.gui = new Gui({ width: 100, height: 50 });
     document.body.appendChild(this.gui.dom);
 
-    const onWindowResize = () => {
+    // Отключение изменения размера экрана
+    /* const onWindowResize = () => {
       const aspect = window.innerWidth / window.innerHeight;
 
       if (this.camera instanceof OrthographicCamera) {
@@ -67,39 +65,16 @@ export class Game {
 
       this.renderer.setSize(window.innerWidth, window.innerHeight);
     };
-    window.addEventListener('resize', onWindowResize);
+    window.addEventListener('resize', onWindowResize); */
   }
 
   public init() {
-    this.camera.position.z = 2;
+    this.camera.position.z = 10;
 
     const background: Actor2D = new Actor2D('background', this, 'assets/grass.jpg');
-    background.sceneObject.scale.x = 6;
-    background.sceneObject.scale.y = 3;
+    background.sceneObject.scale.x = this.width;
+    background.sceneObject.scale.y = this.height;
     this.level.createActor(background);
-
-    const portal: Spawn = new Spawn('portal', this, 'assets/portal.png');
-    portal.sceneObject.scale.x = 0.5;
-    portal.sceneObject.scale.y = 0.5;
-    portal.sceneObject.translateX(2.7);
-    this.level.createActor(portal);
-
-    const pit: Deathpit = new Deathpit('deathpit', this, 'assets/hellhole.png');
-    pit.sceneObject.scale.x = 0.5;
-    pit.sceneObject.scale.y = 0.5;
-    pit.sceneObject.translateX(-2.7);
-    this.level.createActor(pit);
-
-    portal.activate();
-
-    const label = new Label('minionsDestroyed', new Vector2(100, 50),
-      () => `Уничтожено миньонов: ${this.state.destroyedMinionsCount}`,
-      `width: 1500px;
-       font-size: 100px`);
-    this.gui.addElement(label);
-    // const minionsFolder = this.gui.addFolder('Minions');
-    // minionsFolder.add(this.settings, 'minionSpeed').name('Minion speed').listen();
-    // minionsFolder.open();
   }
 
   tick(renderer: Renderer, delta: number) {
