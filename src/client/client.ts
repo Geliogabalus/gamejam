@@ -8,7 +8,7 @@ let game: Game;
 
 const init = () => {
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerHeight * (16 / 9), window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
   game = new Game({

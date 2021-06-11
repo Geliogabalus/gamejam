@@ -21,7 +21,7 @@ export class Minion extends Actor2D {
     }
   }
 
-  onClick() {
+  onLeftMouseButtonClick() {
     this.game.currentLevel.destroyActor(this);
     this.game.state.destroyedMinionsCount += 1;
   }

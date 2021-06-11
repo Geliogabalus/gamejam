@@ -1,4 +1,4 @@
-import { Object3D } from 'three';
+import { Object3D, Vector3 } from 'three';
 import type { Game } from '../game';
 
 export class Actor {
@@ -49,5 +49,6 @@ export class Actor {
 
   onHoverEnd() {}
 
-  onClick() {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onLeftMouseButtonClick(point: Vector3) {}
 }

@@ -17,7 +17,7 @@ export class Controls {
   }
 
   onClick(event: MouseEvent) {
-    this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+    this.pointer.x = (event.clientX / (window.innerHeight * (16 / 9))) * 2 - 1;
     this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     this.raycaster.setFromCamera(this.pointer, this.game.currentCamera);
@@ -31,7 +31,9 @@ export class Controls {
       if (intersection && intersection.object) {
         const clickedActor = currentLevelActors.find((actor) => actor.sceneObject.uuid === intersection.object.uuid);
         if (clickedActor) {
-          clickedActor.onClick();
+          if (event.button === 0) {
+            clickedActor.onLeftMouseButtonClick(intersection.point);
+          }
         }
       }
     }

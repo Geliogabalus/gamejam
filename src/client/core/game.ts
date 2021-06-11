@@ -2,7 +2,9 @@ import * as THREE from 'three';
 import {
   Camera, Renderer,
 } from 'three';
-import { Actor2D } from './actors/actor-2d';
+import { Field } from '../neon-game/field';
+import { Circle } from '../neon-game/circle';
+import { Pin } from '../neon-game/pin';
 import { Controls } from './controls/controls';
 import { Gui } from './gui/gui';
 import { Level } from './level';
@@ -30,13 +32,13 @@ export class Game {
   private gui: Gui;
 
   readonly state: { [key: string]: any } = {
+    circleSpeed: 20,
   };
 
   constructor(settings: GameSettings) {
-    const aspectRatio = this.width / this.height;
     switch (settings.cameraType) {
       case 'orthographic':
-        this.camera = new THREE.OrthographicCamera((-aspectRatio * this.height) / 2, (aspectRatio * this.height) / 2,
+        this.camera = new THREE.OrthographicCamera((-this.width) / 2, (this.width) / 2,
           this.height / 2, -this.height / 2, 0.1, 1000);
         break;
       case 'perspective':
@@ -71,10 +73,23 @@ export class Game {
   public init() {
     this.camera.position.z = 10;
 
-    const background: Actor2D = new Actor2D('background', this, 'assets/grass.jpg');
-    background.sceneObject.scale.x = this.width;
-    background.sceneObject.scale.y = this.height;
-    this.level.createActor(background);
+    const field: Field = new Field('background', this, 'assets/grass.jpg');
+    field.sceneObject.scale.x = this.width;
+    field.sceneObject.scale.y = this.height;
+    this.level.createActor(field);
+
+    const pin: Pin = new Pin('pin', this, 'assets/pin.png');
+    pin.sceneObject.scale.x = 1;
+    pin.sceneObject.scale.y = 1;
+    this.level.createActor(pin);
+
+    const circle: Circle = new Circle('circle', this, 'assets/circle.png');
+    circle.sceneObject.scale.x = 3;
+    circle.sceneObject.scale.y = 3;
+    circle.sceneObject.position.x = 20;
+    this.level.createActor(circle);
+
+    pin.attachCircle(circle);
   }
 
   tick(renderer: Renderer, delta: number) {
