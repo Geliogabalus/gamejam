@@ -1,5 +1,5 @@
-import { Actor2D } from '../core/actors/actor-2d';
 import { Vector2, Vector3 } from 'three';
+import { Actor2D } from '../core/actors/actor-2d';
 import { Binding } from './binding';
 
 export class Circle extends Actor2D {
@@ -11,7 +11,7 @@ export class Circle extends Actor2D {
 
   direction: Vector2 = new Vector2(0, 0);
 
-  binding: Binding | null = null; 
+  binding: Binding | null = null;
 
   attach() {
     this.attached = true;
@@ -23,8 +23,7 @@ export class Circle extends Actor2D {
     if (this.sceneObject.position.y > 0) {
       const angle = this.sceneObject.position.angleTo(new Vector3(bindingLength, 0, 0)) + Math.PI;
       this.binding.sceneObject.rotateZ(angle);
-    }
-    else {
+    } else {
       const angle = this.sceneObject.position.angleTo(new Vector3(-bindingLength, 0, 0));
       this.binding.sceneObject.rotateZ(angle);
     }

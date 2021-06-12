@@ -22,6 +22,11 @@ export class Controls {
 
     this.raycaster.setFromCamera(this.pointer, this.game.currentCamera);
 
+    const baseIntersect = this.raycaster.intersectObject(this.game.basePlane)[0];
+    if (event.button === 0) {
+      this.game.onLeftMouseButtonClick(baseIntersect.point);
+    }
+
     const currentLevelActors = this.game.currentLevel.allActors;
     const intersects = this.raycaster.intersectObjects(this.game.currentLevel.allObjects, true);
     if (intersects.length > 0) {

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {
-  Camera, Layers, Line, Material, Object3D, Renderer, Sprite, WebGLRenderer,
+  Camera, Layers, Line, Material, Mesh, MeshBasicMaterial, Object3D,
+  Renderer, Sprite, Vector3, WebGLRenderer,
 } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
@@ -12,6 +13,8 @@ import { Pin } from '../neon-game/pin';
 import { Controls } from './controls/controls';
 import { Gui } from './gui/gui';
 import { Level } from './level';
+import { LevelBuilder } from '../neon-game/level-builder';
+import { Map } from '../neon-game/map';
 
 export interface GameSettings {
   cameraType?: 'perspective' | 'orthographic',
@@ -43,11 +46,15 @@ export class Game {
 
   private bloomLayer = new Layers();
 
-  readonly materials:{ [key: string]: Material } = {};
+  readonly materials: { [key: string]: Material } = {};
 
   readonly darkSpriteMaterial = new THREE.SpriteMaterial({ color: 'black' });
 
   readonly darkLineMaterial = new THREE.LineBasicMaterial({ color: 'black' });
+
+  basePlane: Mesh;
+
+  map!: Map;
 
   readonly state: { [key: string]: any } = {
     circleSpeed: 20,
@@ -73,6 +80,10 @@ export class Game {
     this.gui = new Gui({ width: 100, height: 50 });
     document.body.appendChild(this.gui.dom);
 
+    this.basePlane = new Mesh(new THREE.PlaneGeometry(1000, 1000), new MeshBasicMaterial());
+    this.basePlane.visible = false;
+    this.scene.add(this.basePlane);
+
     // Постпроцессинг
     const renderScene = new RenderPass(this.scene, this.camera);
 
@@ -94,14 +105,14 @@ export class Game {
           bloomTexture: { value: this.bloomComposer.renderTarget2.texture },
         },
         vertexShader:
-        ` varying vec2 vUv;
+          ` varying vec2 vUv;
           void main() {
             vUv = uv;
             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
           }
         `,
         fragmentShader:
-        ` uniform sampler2D baseTexture;
+          ` uniform sampler2D baseTexture;
           uniform sampler2D bloomTexture;
           varying vec2 vUv;
           
@@ -135,10 +146,10 @@ export class Game {
   public init() {
     this.camera.position.z = 10;
 
-    const field: Field = new Field('background', this, 'assets/grass.jpg');
+    const field: Field = new Field('background', this, 'assets/background.png');
     field.sceneObject.scale.x = this.width;
     field.sceneObject.scale.y = this.height;
-    this.level.addActor(field);
+    // this.level.addActor(field);
 
     const pin: Pin = new Pin('pin', this, 'assets/pin.png');
     pin.sceneObject.scale.x = 1;
@@ -146,12 +157,19 @@ export class Game {
     this.level.addActor(pin);
 
     const circle: Circle = new Circle('circle', this, 'assets/circle.png');
-    circle.sceneObject.scale.x = 3;
-    circle.sceneObject.scale.y = 3;
-    circle.sceneObject.position.x = 20;
+    circle.sceneObject.scale.x = 2;
+    circle.sceneObject.scale.y = 2;
+    circle.sceneObject.position.x = 5;
     this.level.addActor(circle);
 
     pin.attachCircle(circle);
+
+    LevelBuilder.loadMap('map.png', this);
+  }
+
+  initPinPosition(position: Vector3) {
+    const pin = this.currentLevel.getActor('pin');
+    pin.sceneObject.position.set(position.x, position.y, 0);
   }
 
   tick(renderer: Renderer, delta: number) {
@@ -162,6 +180,23 @@ export class Game {
     // render
     this.renderBloom();
     this.finalComposer.render();
+  }
+
+  onLeftMouseButtonClick(point: Vector3) {
+    const pin: Pin = <Pin>(this.currentLevel.getActor('pin'));
+    if (pin != null) {
+      pin.releaseCircle();
+      this.currentLevel.removeActor(pin);
+    } else {
+      const newPin: Pin = new Pin('pin', this, 'assets/pin.png');
+      newPin.sceneObject.scale.x = 1;
+      newPin.sceneObject.scale.y = 1;
+      newPin.sceneObject.position.set(point.x, point.y, 0);
+      this.currentLevel.addActor(newPin);
+
+      const circle = <Circle>(this.currentLevel.getActor('circle'));
+      newPin.attachCircle(circle);
+    }
   }
 
   renderBloom() {
@@ -191,11 +226,11 @@ export class Game {
     }
   }
 
-  public get currentCamera() : Camera {
+  public get currentCamera(): Camera {
     return this.camera;
   }
 
-  public get currentLevel() : Level {
+  public get currentLevel(): Level {
     return this.level;
   }
 }
