@@ -23,13 +23,13 @@ export class Tile {
         break;
       case TileType.START:
       case TileType.DEFAULT:
-        tileMaterial = new SpriteMaterial({ color: 0x333333 });
+        tileMaterial = new SpriteMaterial({ opacity: 0 });
         break;
       case TileType.FINISH:
         tileMaterial = new SpriteMaterial({ color: 0xff0000 });
         break;
       case TileType.WALL:
-        tileMaterial = new SpriteMaterial({ color: 0x440bd4 });
+        tileMaterial = new SpriteMaterial({ opacity: 0, color: 0xffff00 });
         break;
       default:
         break;

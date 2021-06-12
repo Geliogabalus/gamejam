@@ -18,6 +18,7 @@ imageInput.addEventListener('change', ({ target }) => {
         loadImageToCanvas(image);
         const table = processCanvas(context, image);
         level.innerHTML = table.map(row => row.join('')).join('<br>');
+        console.log(JSON.stringify(table.map(row => row.join(''))));
     }
 });
 
@@ -29,11 +30,11 @@ const loadImageToCanvas = (image) => {
 };
 
 const colorMap = {
-    '255,255,255,255': '⬜', //space
-    '255,242,0,255': '🌟', //collectible
-    '63,72,204,255': '🏁', //goal
-    '237,28,36,255': '🎬', //start
-    '0,0,0,255': '🧱', //wall
+    '255,255,255,255': ' ', //space
+    '255,242,0,255': 'C', //collectible
+    '63,72,204,255': 'G', //goal
+    '237,28,36,255': 'S', //start
+    '0,0,0,255': 'W', //wall
 };
 
 const processCanvas = (context, { width, height }) => {
