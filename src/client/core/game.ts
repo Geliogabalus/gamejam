@@ -1,7 +1,11 @@
 import * as THREE from 'three';
 import {
-  Camera, Renderer,
+  Camera, Layers, Line, Material, Object3D, Renderer, Sprite, WebGLRenderer,
 } from 'three';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 import { Field } from '../neon-game/field';
 import { Circle } from '../neon-game/circle';
 import { Pin } from '../neon-game/pin';
@@ -11,11 +15,13 @@ import { Level } from './level';
 
 export interface GameSettings {
   cameraType?: 'perspective' | 'orthographic',
-  renderer: Renderer
+  renderer: WebGLRenderer
 }
 
 export class Game {
   scene: THREE.Scene;
+
+  readonly BLOOM_SCENE = 1;
 
   private camera: THREE.Camera;
 
@@ -25,11 +31,23 @@ export class Game {
 
   readonly height = 90;
 
-  renderer: Renderer;
+  renderer: WebGLRenderer;
 
   private controls: Controls;
 
   private gui: Gui;
+
+  private finalComposer: EffectComposer;
+
+  private bloomComposer: EffectComposer;
+
+  private bloomLayer = new Layers();
+
+  readonly materials:{ [key: string]: Material } = {};
+
+  readonly darkSpriteMaterial = new THREE.SpriteMaterial({ color: 'black' });
+
+  readonly darkLineMaterial = new THREE.LineBasicMaterial({ color: 'black' });
 
   readonly state: { [key: string]: any } = {
     circleSpeed: 20,
@@ -55,6 +73,50 @@ export class Game {
     this.gui = new Gui({ width: 100, height: 50 });
     document.body.appendChild(this.gui.dom);
 
+    // Постпроцессинг
+    const renderScene = new RenderPass(this.scene, this.camera);
+
+    this.bloomLayer.set(this.BLOOM_SCENE);
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+    bloomPass.threshold = 0;
+    bloomPass.strength = 5;
+    bloomPass.radius = 0;
+
+    this.bloomComposer = new EffectComposer(this.renderer);
+    this.bloomComposer.renderToScreen = false;
+    this.bloomComposer.addPass(renderScene);
+    this.bloomComposer.addPass(bloomPass);
+
+    const finalPass = new ShaderPass(
+      new THREE.ShaderMaterial({
+        uniforms: {
+          baseTexture: { value: null },
+          bloomTexture: { value: this.bloomComposer.renderTarget2.texture },
+        },
+        vertexShader:
+        ` varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader:
+        ` uniform sampler2D baseTexture;
+          uniform sampler2D bloomTexture;
+          varying vec2 vUv;
+          
+          void main() {
+            gl_FragColor = (texture2D(baseTexture, vUv) + vec4(1.0) * texture2D(bloomTexture, vUv));
+          }
+        `,
+        defines: {},
+      }), 'baseTexture',
+    );
+    finalPass.needsSwap = true;
+
+    this.finalComposer = new EffectComposer(this.renderer);
+    this.finalComposer.addPass(renderScene);
+    this.finalComposer.addPass(finalPass);
     // Отключение изменения размера экрана
     /* const onWindowResize = () => {
       const aspect = window.innerWidth / window.innerHeight;
@@ -97,7 +159,36 @@ export class Game {
     this.gui.update();
     // this.level.getActor('cube').addRotation(new THREE.Vector3(0, 0, 0.5))
 
-    renderer.render(this.scene, this.camera);
+    // render
+    this.renderBloom();
+    this.finalComposer.render();
+  }
+
+  renderBloom() {
+    this.scene.traverse(this.darkenNonBloomed.bind(this));
+    this.bloomComposer.render();
+    this.scene.traverse(this.restoreMaterial.bind(this));
+  }
+
+  darkenNonBloomed(obj: Object3D) {
+    if (this.bloomLayer.test(obj.layers) === false) {
+      if (obj instanceof Sprite) {
+        this.materials[obj.uuid] = (<any>obj).material;
+        (<any>obj).material = this.darkSpriteMaterial;
+      }
+
+      if (obj instanceof Line) {
+        this.materials[obj.uuid] = (<any>obj).material;
+        (<any>obj).material = this.darkLineMaterial;
+      }
+    }
+  }
+
+  restoreMaterial(obj: Object3D) {
+    if (this.materials[obj.uuid]) {
+      (<any>obj).material = this.materials[obj.uuid];
+      delete this.materials[obj.uuid];
+    }
   }
 
   public get currentCamera() : Camera {

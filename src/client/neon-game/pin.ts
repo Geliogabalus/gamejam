@@ -1,8 +1,6 @@
-import { Utils } from '../core/misc/utils';
 import { Vector3 } from 'three';
 import { Actor2D } from '../core/actors/actor-2d';
-import { Binding } from './binding';
-import { Circle } from './circle';
+import type { Circle } from './circle';
 
 export class Pin extends Actor2D {
   activeCircle: Circle | null = null;
