@@ -1,6 +1,6 @@
-import { LevelData } from './levels/levelData.type';
+import { LevelData } from './levelData.type';
 
-export const level1: LevelData = [
+export const level5: LevelData = [
   '                             W          WWWWWWWWWWWWWWW       WWWWWWWWWWWWWWWWWW',
   '                             W         WWWWWWWWWWWWWWWWW             WWWWWWWWWWW',
   '                            WW         WWWWWWWWWWWWWWWWWW               WWWWWWWW',

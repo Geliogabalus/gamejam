@@ -2,8 +2,7 @@ import type { Game } from 'core/game';
 import { Vector2 } from 'three';
 import { Map } from './map';
 import { TileType } from './tile';
-import { level1 } from '../data/level1';
-import { LevelData } from '../data/levels/levelData.type';
+import { level4, LevelData } from '../data/levels';
 
 const getSquareMap = (map: number[][]) => {
   const newMap: string[][] = [];
@@ -44,7 +43,7 @@ const getWallMap = (level: LevelData) => {
 
 export class LevelBuilder {
   static loadMap(mapName: string, game: Game) {
-    const level = addLevelBorders(level1);
+    const level = addLevelBorders(level4);
     const map = new Map('map', game, level[0].length, level.length, new Vector2(-80, 37));
     game.currentLevel.addActor(map);
 
