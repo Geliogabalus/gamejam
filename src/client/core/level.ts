@@ -13,7 +13,7 @@ export class Level {
     this.game = game;
   }
 
-  createActor(actor: Actor) {
+  addActor(actor: Actor) {
     this.actors[actor.name] = actor;
 
     if (actor.sceneObject) {
@@ -21,7 +21,7 @@ export class Level {
     }
   }
 
-  destroyActor(actor: Actor) {
+  removeActor(actor: Actor) {
     if (actor.sceneObject) {
       this.game.scene.remove(actor.sceneObject);
     }

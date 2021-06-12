@@ -76,18 +76,18 @@ export class Game {
     const field: Field = new Field('background', this, 'assets/grass.jpg');
     field.sceneObject.scale.x = this.width;
     field.sceneObject.scale.y = this.height;
-    this.level.createActor(field);
+    this.level.addActor(field);
 
     const pin: Pin = new Pin('pin', this, 'assets/pin.png');
     pin.sceneObject.scale.x = 1;
     pin.sceneObject.scale.y = 1;
-    this.level.createActor(pin);
+    this.level.addActor(pin);
 
     const circle: Circle = new Circle('circle', this, 'assets/circle.png');
     circle.sceneObject.scale.x = 3;
     circle.sceneObject.scale.y = 3;
     circle.sceneObject.position.x = 20;
-    this.level.createActor(circle);
+    this.level.addActor(circle);
 
     pin.attachCircle(circle);
   }

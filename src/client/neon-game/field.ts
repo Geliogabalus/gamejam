@@ -8,13 +8,13 @@ export class Field extends Actor2D {
     const pin: Pin = <Pin>(this.game.currentLevel.getActor('pin'));
     if (pin != null) {
       pin.releaseCircle();
-      this.game.currentLevel.destroyActor(pin);
+      this.game.currentLevel.removeActor(pin);
     } else {
       const newPin: Pin = new Pin('pin', this.game, 'assets/pin.png');
       newPin.sceneObject.scale.x = 1;
       newPin.sceneObject.scale.y = 1;
       newPin.sceneObject.position.set(point.x, point.y, this.sceneObject.position.z);
-      this.game.currentLevel.createActor(newPin);
+      this.game.currentLevel.addActor(newPin);
 
       const circle = <Circle>(this.game.currentLevel.getActor('circle'));
       newPin.attachCircle(circle);
