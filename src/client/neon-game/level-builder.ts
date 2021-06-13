@@ -41,24 +41,11 @@ const getWallMap = (level: LevelData) => {
   return getSquareMap(wallMap);
 };
 
-const findObjects = (level: LevelData, letter: string) => {
-  const entries: { x: number, y: number }[] = [];
-  level
-    .forEach((row, i) => row.split('')
-      .forEach((tile, j) => {
-        if (tile === letter) {
-          entries.push({ x: j, y: i });
-        }
-      }));
-  return entries;
-};
-
 export class LevelBuilder {
   static loadMap(mapName: string, game: Game) {
     const level = addLevelBorders(level4);
     const map = new Map('map', game, level[0].length, level.length, new Vector2(-80, 37));
 
-    const [start] = findObjects(level, 'S');
     game.currentLevel.addActor(map);
 
     const squareMap = getWallMap(level);

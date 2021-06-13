@@ -3,7 +3,7 @@ import {
 } from 'three';
 
 export enum TileType {
-  START,
+  START = 1,
   DEFAULT,
   WALL,
   STAR,
