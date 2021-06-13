@@ -111,7 +111,7 @@ export class Circle extends Actor {
     mapPosition.x = worldPosition.x - map.origin.x;
     mapPosition.y = worldPosition.y - map.origin.y;
 
-    for (let i = 0; i < map.wallTiles.length - 1; i += 1) {
+    for (let i = 0; i < map.wallTiles.length; i += 1) {
       const tile = map.wallTiles[i];
       const distX = Math.abs(mapPosition.x - tile.objectWrapper.position.x);
       const distY = Math.abs(mapPosition.y - tile.objectWrapper.position.y);
@@ -136,7 +136,7 @@ export class Circle extends Actor {
       }
     }
 
-    for (let i = 0; i < map.starTiles.length - 1; i += 1) {
+    for (let i = 0; i < map.starTiles.length; i += 1) {
       const tile = map.starTiles[i];
       if (tile.collected) continue;
 
@@ -194,10 +194,15 @@ export class Circle extends Actor {
     tile.collect();
     pickup.play();
     this.game.state.currentLevelStars += 1;
+    if (this.game.state.currentLevelStars === 3) {
+      this.game.map.finishTile.sceneObject.layers.toggle(this.game.BLOOM_SCENE);
+    }
   }
 
   finishSequence() {
-    complete.play();
-    this.game.restart();
+    if (this.game.state.currentLevelStars === 3) {
+      complete.play();
+      this.game.toNextLevel();
+    }
   }
 }

@@ -168,6 +168,7 @@ export class Game {
     };
     window.addEventListener('resize', onWindowResize); */
 
+    this.playMusic();
     this.setCursor(CursorType.DEFAULT);
   }
 
@@ -192,9 +193,49 @@ export class Game {
     sound.play();
   }
 
+  toNextLevel() {
+    const pin: Pin = <Pin>(this.level.getActor('pin'));
+    if (pin) {
+      this.level.removeActor(pin);
+    }
+    const circle: Circle = <Circle>(this.level.getActor('circle'));
+    if (circle) {
+      this.level.removeActor(circle);
+    }
+
+    if (this.state.currentLevel === 7) {
+      const buttonMenu = new Button('buttonMenu', this, 'assets/buttonMenu.png');
+      buttonMenu.sceneObject.scale.x = 60;
+      buttonMenu.sceneObject.scale.y = 24;
+      //buttonMenu.sceneObject.position.x = 140;
+      buttonMenu.sceneObject.position.z = 1;
+      this.level.addActor(buttonMenu);
+  
+      buttonMenu.onLeftMouseButtonClick = () => {
+        this.state.currentLevelStars = 0;
+        this.state.currentPhase = GamePhase.MENU;
+        this.state.currentLevel = 1;
+        this.createScene();
+      }
+    } else {
+      const buttonNext = new Button('buttonNext', this, 'assets/buttonNext.png');
+      buttonNext.sceneObject.scale.x = 20;
+      buttonNext.sceneObject.scale.y = 8;
+      //buttonMenu.sceneObject.position.x = 140;
+      buttonNext.sceneObject.position.z = 1;
+      this.level.addActor(buttonNext);
+  
+      buttonNext.onLeftMouseButtonClick = () => {
+        this.state.currentLevelStars = 0;
+        this.state.circleSpeed += 1;
+        this.state.currentLevel += 1;
+        this.createScene();
+      }
+    }
+  }
+
   public createScene() {
     this.level.clear();
-    // this.playMusic();
 
     this.basePlane = new Mesh(new THREE.PlaneGeometry(1000, 1000), new MeshBasicMaterial());
     this.basePlane.visible = false;
@@ -215,7 +256,6 @@ export class Game {
 
         buttonMenu.onLeftMouseButtonClick = () => {
           this.state.currentPhase = GamePhase.MENU;
-          this.state.currentLevel = 1;
           this.createScene();
         }
         break;
@@ -226,11 +266,11 @@ export class Game {
         mainMenu.sceneObject.scale.y = 90;
         this.level.addActor(mainMenu);
 
-        /* const mainPanel = new Actor2D('mainPanel', this, 'assets/panelVert.png');
-        mainPanel.sceneObject.scale.x = 43;
-        mainPanel.sceneObject.scale.y = 56;
-        mainPanel.sceneObject.position.y = -10;
-        this.level.addActor(mainPanel); */
+        const header = new Actor2D('header', this, 'assets/header.png');
+        header.sceneObject.scale.x = 100;
+        header.sceneObject.scale.y = 25;
+        header.sceneObject.position.y = 25;
+        this.level.addActor(header);
 
         const buttonPlay = new Button('buttonPlay', this, 'assets/buttonPlay.png');
         buttonPlay.sceneObject.scale.x = 60;
@@ -241,7 +281,7 @@ export class Game {
 
         buttonPlay.onLeftMouseButtonClick = () => {
           this.state.currentPhase = GamePhase.GAME;
-          this.state.currentLevel = 1;
+          this.state.currentLevelStars = 0;
           this.createScene();
         }
 

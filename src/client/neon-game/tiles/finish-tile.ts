@@ -11,7 +11,7 @@ export class FinishTile extends DefaultTile {
     const material = new SpriteMaterial({ map: texture, alphaTest: 0 });
     this.sceneObject = new Sprite(material);
     this.sceneObject.scale.set(2, 2, 1)
-    this.sceneObject.layers.toggle(this.game.BLOOM_SCENE);
+    // this.sceneObject.layers.toggle(this.game.BLOOM_SCENE);
     this.objectWrapper.add(this.sceneObject);
   }
 }
