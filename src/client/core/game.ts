@@ -192,7 +192,7 @@ export class Game {
 
   public createScene() {
     this.level.clear();
-    this.playMusic();
+    // this.playMusic();
 
     this.basePlane = new Mesh(new THREE.PlaneGeometry(1000, 1000), new MeshBasicMaterial());
     this.basePlane.visible = false;

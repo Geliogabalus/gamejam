@@ -6,7 +6,7 @@ import { Actor } from '../core/actors/actor';
 import { Binding } from './binding';
 import type { Game } from '../core/game';
 import { StarTile } from './tiles/star-tile';
-import { crash } from '../core/misc/createSound';
+import { complete, crash, pickup } from '../core/misc/createSound';
 
 export class Circle extends Actor {
   attached: boolean = false;
@@ -192,10 +192,12 @@ export class Circle extends Actor {
 
   starCollisionSequence(tile: StarTile) {
     tile.collect();
+    pickup.play();
     this.game.state.currentLevelStars += 1;
   }
 
   finishSequence() {
-    this.game.restart()
+    complete.play();
+    this.game.restart();
   }
 }
