@@ -7,10 +7,11 @@ import { level4, LevelData } from '../data/levels';
 const getSquareMap = (map: number[][]) => {
   const newMap: string[][] = [];
 
-  for (let y = 0; y < map.length - 1; y += 1) {
+  for (let y = 0; y < map.length; y += 1) {
     const newRow: string[] = [];
-    for (let x = 0; x < map[0].length - 1; x += 1) {
-      newRow.push(`${map[y][x]}${map[y][x + 1]}${map[y + 1][x]}${map[y + 1][x + 1]}`);
+    for (let x = 0; x < map[0].length; x += 1) {
+      // eslint-disable-next-line no-nested-ternary
+      newRow.push(`${map[y][x]}${map[y][x + 1] != null ? map[y][x + 1] : '0'}${map[y + 1] != null ? (map[y + 1][x] != null ? map[y + 1][x] : '0') : '0'}${map[y + 1] != null ? (map[y + 1][x + 1] != null ? map[y + 1][x + 1] : '0') : '0'}`);
     }
     newMap.push(newRow);
   }
@@ -49,15 +50,10 @@ export class LevelBuilder {
 
     const squareMap = getWallMap(level);
 
-    squareMap
-      .forEach((row, i) => row
-        .forEach((tile, j) => map
-          .addWallImage(j + 1, i + 1, tile)));
-
     level
       .forEach((row, i) => row.split('')
         .forEach((tile, j) => map
-          .addTile(j, i, letterToTileTypeMap[tile] || TileType.DEFAULT)));
+          .addTile(j, i, letterToTileTypeMap[tile] || TileType.DEFAULT, squareMap[i][j])));
 
     game.map = map;
   }
