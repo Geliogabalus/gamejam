@@ -1,17 +1,17 @@
 import { Game } from 'core/game';
-import { Sprite, SpriteMaterial } from 'three';
+import { Sprite, SpriteMaterial, TextureLoader } from 'three';
 import { TileType } from '../tile';
 import { DefaultTile } from './default-tile';
 
 export class FinishTile extends DefaultTile {
   constructor(name: string, game: Game, type: TileType, code: string) {
     super(name, game, type, code);
-    /* const loader = new TextureLoader();
-    const texture = loader.load(`assets/walls/${code}.png`);
-    const material = new SpriteMaterial({ transparent: true, opacity: 1, map: texture });
-    const sprite = new Sprite(material); */
-    const tileMaterial = new SpriteMaterial({ color: 0xff0000 });
-    this.sceneObject = new Sprite(tileMaterial);
+    let loader = new TextureLoader();
+    const texture = loader.load('assets/finish.png')
+    const material = new SpriteMaterial({ map: texture, alphaTest: 0 });
+    this.sceneObject = new Sprite(material);
+    this.sceneObject.scale.set(2, 2, 1)
+    this.sceneObject.layers.toggle(this.game.BLOOM_SCENE);
     this.objectWrapper.add(this.sceneObject);
   }
 }

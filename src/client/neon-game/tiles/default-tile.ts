@@ -1,4 +1,4 @@
-import { Game } from 'core/game';
+import { CursorType, Game } from '../../core/game';
 import {
   Sprite, SpriteMaterial, TextureLoader, Vector3,
 } from 'three';
@@ -23,5 +23,9 @@ export class DefaultTile extends Tile {
   onLeftMouseButtonClick(point: Vector3) {
     this.game.releasePin();
     this.game.placePin(point);
+  }
+
+  onHoverStart() {
+    this.game.setCursor(CursorType.POINTER);
   }
 }

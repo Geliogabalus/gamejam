@@ -68,4 +68,10 @@ export class Level {
     delete this.actors[actor.name];
     delete this.actorsByObjectUuid[actor.sceneObject.uuid];
   }
+
+  clear() {
+    this.game.scene.clear();
+    this.actors = {};
+    this.actorsByObjectUuid = {};
+  }
 }

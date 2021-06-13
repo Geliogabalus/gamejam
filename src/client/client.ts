@@ -15,7 +15,7 @@ const init = () => {
     cameraType: 'orthographic',
     renderer,
   });
-  game.init();
+  game.createScene();
 
   renderer.setAnimationLoop(() => {
     timer.update();
