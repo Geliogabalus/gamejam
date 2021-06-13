@@ -1,4 +1,4 @@
-import { Game } from 'core/game';
+import { CursorType, Game } from '../../core/game';
 import { Sprite, SpriteMaterial, TextureLoader } from 'three';
 import { Tile, TileType } from '../tile';
 
@@ -13,5 +13,9 @@ export class WallTile extends Tile {
     this.sceneObject.position.y = -this.sceneObject.scale.y / 2;
     this.sceneObject.position.z = -0.001;
     this.objectWrapper.add(this.sceneObject);
+  }
+
+  onHoverStart() {
+    this.game.setCursor(CursorType.POINTER_ERROR);
   }
 }

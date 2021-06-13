@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {
-  Camera, Layers, Line, Material, Mesh, MeshBasicMaterial, Object3D,
+  Camera, Layers, Line, Material, Mesh, MeshBasicMaterial, NearestMipmapLinearFilter, Object3D,
   Renderer, Sprite, Vector, Vector2, Vector3, WebGLRenderer,
 } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
@@ -15,10 +15,22 @@ import { Gui } from './gui/gui';
 import { Level } from './level';
 import { Map } from '../neon-game/map';
 import { LevelBuilder } from '../neon-game/level-builder';
+import { Actor2D } from './actors/actor-2d';
 
 export interface GameSettings {
   cameraType?: 'perspective' | 'orthographic',
   renderer: WebGLRenderer
+}
+
+export enum GamePhase {
+  MENU,
+  GAME
+}
+
+export enum CursorType {
+  DEFAULT,
+  POINTER,
+  POINTER_ERROR
 }
 
 export class Game {
@@ -56,7 +68,7 @@ export class Game {
 
   glitching = false;
 
-  basePlane: Mesh;
+  basePlane!: Mesh;
 
   map!: Map;
 
@@ -64,7 +76,12 @@ export class Game {
 
   readonly state: { [key: string]: any } = {
     circleSpeed: 10,
-    currentLevelStars: 0
+    currentLevelStars: 0,
+    currentPhase: GamePhase.MENU,
+    currentLevel: 1,
+    currentPlayerData: {
+      levelStats: []
+    }
   };
 
   constructor(settings: GameSettings) {
@@ -86,10 +103,6 @@ export class Game {
     this.controls = new Controls(this);
     this.gui = new Gui({ width: 100, height: 50 });
     document.body.appendChild(this.gui.dom);
-
-    this.basePlane = new Mesh(new THREE.PlaneGeometry(1000, 1000), new MeshBasicMaterial());
-    this.basePlane.visible = false;
-    this.scene.add(this.basePlane);
 
     // Постпроцессинг
     const renderScene = new RenderPass(this.scene, this.camera);
@@ -151,26 +164,90 @@ export class Game {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
     };
     window.addEventListener('resize', onWindowResize); */
+
+    this.setCursor(CursorType.DEFAULT);
   }
 
-  public init() {
-    this.camera.position.z = 10;
+  setCursor(type: CursorType) {
+    switch (type) {
+      case CursorType.POINTER:
+        document.body.style.cursor = "url('assets/Select_blue.png'), auto";
+        break;
+      case CursorType.POINTER_ERROR:
+        document.body.style.cursor = "url('assets/Select_red.png'), auto";
+        break;
+      case CursorType.DEFAULT:
+        document.body.style.cursor = "url('assets/Arrow_blue.png'), auto";
+      default:
+        break;
+    }
+    // document.body.style.cursor = "pointer"
+  }
 
-    LevelBuilder.loadMap('map.png', this);
+  public createScene() {
+    this.level.clear();
+
+    this.basePlane = new Mesh(new THREE.PlaneGeometry(1000, 1000), new MeshBasicMaterial());
+    this.basePlane.visible = false;
+    this.scene.add(this.basePlane);
+
+    this.camera.position.z = 10;
+    switch (this.state.currentPhase) {
+      case GamePhase.GAME:
+        LevelBuilder.loadMap(this.state.currentLevel, this);
+        break;
+      case GamePhase.MENU:
+      default:
+        const mainMenu = new Actor2D('mainMenu', this, 'assets/main-menu.jpg');
+        mainMenu.sceneObject.scale.x = 160;
+        mainMenu.sceneObject.scale.y = 90;
+        this.level.addActor(mainMenu);
+
+        /* const mainPanel = new Actor2D('mainPanel', this, 'assets/panelVert.png');
+        mainPanel.sceneObject.scale.x = 43;
+        mainPanel.sceneObject.scale.y = 56;
+        mainPanel.sceneObject.position.y = -10;
+        this.level.addActor(mainPanel); */
+
+        const buttonPlay = new Actor2D('buttonPlay', this, 'assets/buttonPlay.png');
+        buttonPlay.sceneObject.scale.x = 60;
+        buttonPlay.sceneObject.scale.y = 24;
+        buttonPlay.sceneObject.position.y = -10;
+        buttonPlay.sceneObject.position.z = 0.01;
+        this.level.addActor(buttonPlay);
+
+        buttonPlay.onLeftMouseButtonClick = () => {
+          this.state.currentPhase = GamePhase.GAME;
+          this.state.currentLevel = 1;
+          this.createScene();
+        }
+
+        buttonPlay.onHoverStart = () => {
+          this.setCursor(CursorType.POINTER);
+        }
+
+        buttonPlay.onHoverEnd = () => {
+          this.setCursor(CursorType.DEFAULT);
+        }
+
+        break;
+    }
   }
 
   initPinPosition() {
-    const pin: Pin = new Pin('pin', this, 0.5);
-    pin.sceneObject.scale.x = 1;
-    pin.sceneObject.scale.y = 1;
-    this.level.addActor(pin);
-
-    const circle: Circle = new Circle('circle', this, 1);
-    circle.sceneObject.position.x = 5;
-    this.level.addActor(circle);
-
-    pin.attachCircle(circle);
-    pin.sceneObject.position.set(this.startPosition.x, this.startPosition.y, 0);
+    setTimeout(() => {
+      const pin: Pin = new Pin('pin', this, 0.5);
+      pin.sceneObject.scale.x = 1;
+      pin.sceneObject.scale.y = 1;
+      this.level.addActor(pin);
+  
+      const circle: Circle = new Circle('circle', this, 1);
+      circle.sceneObject.position.x = 5;
+      this.level.addActor(circle);
+  
+      pin.attachCircle(circle);
+      pin.sceneObject.position.set(this.startPosition.x, this.startPosition.y, 0);
+    }, 200)
   }
 
   restart() {

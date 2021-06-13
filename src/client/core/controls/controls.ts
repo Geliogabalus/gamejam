@@ -1,3 +1,4 @@
+import { Actor } from '../actors/actor';
 import { Raycaster, Vector2 } from 'three';
 import type { Game } from '../game';
 
@@ -51,28 +52,36 @@ export class Controls {
   }
 
   onPointerMove(event: PointerEvent) {
-    this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+    this.pointer.x = (event.clientX / (window.innerHeight * (16 / 9))) * 2 - 1;
     this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     this.raycaster.setFromCamera(this.pointer, this.game.currentCamera);
 
-    const currentLevelActors = this.game.currentLevel.allActors;
-    currentLevelActors.forEach((actor) => {
-      const intersects = this.raycaster.intersectObject(actor.sceneObject, true);
+    const intersects = this.raycaster.intersectObjects(this.game.currentLevel.allObjects, true);
+    let hoveredActor: Actor | null = null;
+    if (intersects.length > 0) {
+      intersects.sort((a, b) => a.distance - b.distance);
+      const intersection = intersects[0];
 
-      if (intersects.length > 0) {
-        const intersection = intersects.filter((int) => int && int.object)[0];
-
-        if (intersection && intersection.object) {
-          if (!actor.isHovered) {
-            actor.setHovered(true);
-            actor.onHoverStart();
+      if (intersection && intersection.object) {
+        hoveredActor = this.game.currentLevel.actorsByObjectUuid[intersection.object.uuid];
+        if (hoveredActor) {
+          if (!hoveredActor.isHovered) {
+            hoveredActor.setHovered(true);
+            hoveredActor.onHoverStart();
           }
         }
-      } else if (actor.isHovered) {
-        actor.setHovered(false);
-        actor.onHoverEnd();
       }
-    });
+    }
+    if (hoveredActor instanceof Actor) {
+      this.game.currentLevel.allActors.forEach(a => {
+        if (a.name !== (<Actor>hoveredActor).name) {
+          if (a.isHovered) {
+            a.setHovered(false);
+            a.onHoverEnd();
+          }
+        }
+      })
+    }
   }
 }

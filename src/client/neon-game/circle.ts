@@ -135,8 +135,10 @@ export class Circle extends Actor {
       }
     }
 
-    for (let i = 0; i < map.starTiles.filter(t => !t.collected).length - 1; i += 1) {
+    for (let i = 0; i < map.starTiles.length - 1; i += 1) {    
       const tile = map.starTiles[i];
+      if (tile.collected) continue;
+
       const distX = Math.abs(mapPosition.x - tile.objectWrapper.position.x);
       const distY = Math.abs(mapPosition.y - tile.objectWrapper.position.y);
 
