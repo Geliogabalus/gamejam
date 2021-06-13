@@ -16,6 +16,8 @@ import { Level } from './level';
 import { Map } from '../neon-game/map';
 import { LevelBuilder } from '../neon-game/level-builder';
 import { Actor2D } from './actors/actor-2d';
+import { Builder } from './misc/builder';
+import { Button } from './actors/button';
 
 export interface GameSettings {
   cameraType?: 'perspective' | 'orthographic',
@@ -195,6 +197,20 @@ export class Game {
     switch (this.state.currentPhase) {
       case GamePhase.GAME:
         LevelBuilder.loadMap(this.state.currentLevel, this);
+
+        const buttonMenu = new Button('buttonMenu', this, 'assets/buttonMenu.png');
+        buttonMenu.sceneObject.scale.x = 20;
+        buttonMenu.sceneObject.scale.y = 8;
+        //buttonMenu.sceneObject.position.x = 140;
+        buttonMenu.sceneObject.position.y = 40.5;
+        buttonMenu.sceneObject.position.z = 1;
+        this.level.addActor(buttonMenu);
+
+        buttonMenu.onLeftMouseButtonClick = () => {
+          this.state.currentPhase = GamePhase.MENU;
+          this.state.currentLevel = 1;
+          this.createScene();
+        }
         break;
       case GamePhase.MENU:
       default:
@@ -209,7 +225,7 @@ export class Game {
         mainPanel.sceneObject.position.y = -10;
         this.level.addActor(mainPanel); */
 
-        const buttonPlay = new Actor2D('buttonPlay', this, 'assets/buttonPlay.png');
+        const buttonPlay = new Button('buttonPlay', this, 'assets/buttonPlay.png');
         buttonPlay.sceneObject.scale.x = 60;
         buttonPlay.sceneObject.scale.y = 24;
         buttonPlay.sceneObject.position.y = -10;
@@ -220,14 +236,6 @@ export class Game {
           this.state.currentPhase = GamePhase.GAME;
           this.state.currentLevel = 1;
           this.createScene();
-        }
-
-        buttonPlay.onHoverStart = () => {
-          this.setCursor(CursorType.POINTER);
-        }
-
-        buttonPlay.onHoverEnd = () => {
-          this.setCursor(CursorType.DEFAULT);
         }
 
         break;
