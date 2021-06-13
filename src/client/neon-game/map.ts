@@ -54,7 +54,6 @@ export class Map extends Actor {
     // const plane = new Mesh(new PlaneGeometry(1, 1), new MeshBasicMaterial({ wireframe: true, color: 0xff0000 }));
     // tile.sceneObject.add(plane);
 
-    console.log(type);
     if (type === TileType.START) {
       this.startTile = tile;
       const constStartPos = this.sceneObject.position.clone();
