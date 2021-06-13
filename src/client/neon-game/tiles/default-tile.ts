@@ -21,20 +21,7 @@ export class DefaultTile extends Tile {
   }
 
   onLeftMouseButtonClick(point: Vector3) {
-    const pin: Pin = <Pin>(this.game.currentLevel.getActor('pin'));
-    if (pin == null && !this.game.pinToggled) {
-      const newPin: Pin = new Pin('pin', this.game, 'assets/pin.png');
-      newPin.sceneObject.scale.x = 1;
-      newPin.sceneObject.scale.y = 1;
-      newPin.sceneObject.position.set(point.x, point.y, 0);
-      this.game.currentLevel.addActor(newPin);
-
-      const circle = <Circle>(this.game.currentLevel.getActor('circle'));
-      newPin.attachCircle(circle);
-
-      this.game.pinToggled = false;
-    } else {
-      this.game.pinToggled = false;
-    }
+    this.game.releasePin();
+    this.game.placePin(point);
   }
 }

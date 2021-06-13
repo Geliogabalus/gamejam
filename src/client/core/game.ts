@@ -60,8 +60,6 @@ export class Game {
 
   map!: Map;
 
-  pinToggled = false;
-
   readonly state: { [key: string]: any } = {
     circleSpeed: 20,
   };
@@ -182,14 +180,30 @@ export class Game {
     this.finalComposer.render();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onLeftMouseButtonClick(point: Vector3) {
+  placePin(point: Vector3) {
+    const newPin: Pin = new Pin('pin', this, 'assets/pin.png');
+    newPin.sceneObject.scale.x = 1;
+    newPin.sceneObject.scale.y = 1;
+    newPin.sceneObject.position.set(point.x, point.y, 0);
+    this.currentLevel.addActor(newPin);
+
+    const circle = <Circle>(this.currentLevel.getActor('circle'));
+    newPin.attachCircle(circle);
+  }
+
+  releasePin() {
     const pin: Pin = <Pin>(this.currentLevel.getActor('pin'));
-    if (pin != null) {
+    if (pin) {
       pin.releaseCircle();
       this.currentLevel.removeActor(pin);
-      this.pinToggled = true;
     }
+  }
+
+  onLeftMouseButtonUp() {
+    this.releasePin();
+  }
+
+  onLeftMouseButtonDown(point: Vector3) {
   }
 
   renderBloom() {

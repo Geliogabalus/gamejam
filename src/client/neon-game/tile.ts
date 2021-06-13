@@ -13,11 +13,11 @@ export enum TileType {
 }
 
 export class Tile extends Actor {
-  readonly type: TileType;
-
   objectWrapper: Group = new Group();
 
-  sceneObject: Sprite = new Sprite();
+  sprite: Sprite = new Sprite();
+
+  type: TileType
 
   constructor(name: string, game: Game, type: TileType) {
     super(name, game);
