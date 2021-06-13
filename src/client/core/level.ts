@@ -39,7 +39,7 @@ export class Level {
     });
   }
 
-  public get allObjects() : Object3D[] {
+  public get allObjects(): Object3D[] {
     const result: Object3D[] = [];
     Object.values(this.actors).forEach((actor) => {
       result.push(actor.sceneObject);
@@ -47,7 +47,7 @@ export class Level {
     return result;
   }
 
-  public get allActors() : Actor[] {
+  public get allActors(): Actor[] {
     const result: Actor[] = [];
     Object.values(this.actors).forEach((actor) => {
       result.push(actor);

@@ -1,4 +1,6 @@
-import { Sprite, SpriteMaterial } from 'three';
+import {
+  Sprite, SpriteMaterial, SpriteMaterialParameters, TextureLoader,
+} from 'three';
 
 export enum TileType {
   START,
@@ -8,33 +10,21 @@ export enum TileType {
   FINISH,
 }
 
-export class Tile {
-  readonly type: TileType;
+const loader = new TextureLoader();
 
+const materialMap: { [key in TileType]: SpriteMaterialParameters } = {
+  [TileType.STAR]: { color: 0xffd700, map: loader.load('assets/star.png') },
+  [TileType.START]: { opacity: 0 },
+  [TileType.DEFAULT]: { opacity: 0 },
+  [TileType.FINISH]: { color: 0xff0000 },
+  [TileType.WALL]: { opacity: 0 },
+};
+
+export class Tile {
   sprite: Sprite;
 
-  constructor(type: TileType) {
-    this.type = type;
-
-    let tileMaterial = new SpriteMaterial({ color: 0xffffff });
-    switch (type) {
-      case TileType.STAR:
-        tileMaterial = new SpriteMaterial({ color: 0xffd700 });
-        break;
-      case TileType.START:
-      case TileType.DEFAULT:
-        tileMaterial = new SpriteMaterial({ opacity: 0 });
-        break;
-      case TileType.FINISH:
-        tileMaterial = new SpriteMaterial({ color: 0xff0000 });
-        break;
-      case TileType.WALL:
-        tileMaterial = new SpriteMaterial({ opacity: 0, color: 0xffff00 });
-        break;
-      default:
-        break;
-    }
-
+  constructor(public readonly type: TileType) {
+    const tileMaterial = new SpriteMaterial(materialMap[type]);
     this.sprite = new Sprite(tileMaterial);
   }
 }
