@@ -49,15 +49,11 @@ export class LevelBuilder {
     game.currentLevel.addActor(map);
 
     const squareMap = getWallMap(level);
-    squareMap
-      .forEach((row, i) => row
-        .forEach((tile, j) => map
-          .addWallImage(j + 1, i + 1, tile)));
 
     level
       .forEach((row, i) => row.split('')
         .forEach((tile, j) => map
-          .addTile(j, i, letterToTileTypeMap[tile] || TileType.DEFAULT)));
+          .addTile(j, i, letterToTileTypeMap[tile] || TileType.DEFAULT, squareMap[i] ? (squareMap[i][j] || '1111') : '1111')));
 
     game.map = map;
   }
