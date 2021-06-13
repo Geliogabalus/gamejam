@@ -92,7 +92,8 @@ export class Map extends Actor {
       const constStartPos = this.sceneObject.position.clone();
       constStartPos.setX(constStartPos.x + tile.objectWrapper.position.x);
       constStartPos.setY(constStartPos.y + tile.objectWrapper.position.y);
-      this.game.initPinPosition(constStartPos);
+      this.game.startPosition = new Vector2(constStartPos.x, constStartPos.y);
+      this.game.initPinPosition();
     }
   }
 }

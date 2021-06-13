@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {
   Camera, Layers, Line, Material, Mesh, MeshBasicMaterial, Object3D,
-  Renderer, Sprite, Vector3, WebGLRenderer,
+  Renderer, Sprite, Vector, Vector2, Vector3, WebGLRenderer,
 } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
@@ -59,6 +59,8 @@ export class Game {
   basePlane: Mesh;
 
   map!: Map;
+
+  startPosition = new Vector2();
 
   readonly state: { [key: string]: any } = {
     circleSpeed: 20,
@@ -156,7 +158,7 @@ export class Game {
     LevelBuilder.loadMap('map.png', this);
   }
 
-  initPinPosition(position: Vector3) {
+  initPinPosition() {
     const pin: Pin = new Pin('pin', this, 'assets/pin.png');
     pin.sceneObject.scale.x = 1;
     pin.sceneObject.scale.y = 1;
@@ -167,7 +169,19 @@ export class Game {
     this.level.addActor(circle);
 
     pin.attachCircle(circle);
-    pin.sceneObject.position.set(position.x, position.y, 0);
+    pin.sceneObject.position.set(this.startPosition.x, this.startPosition.y, 0);
+  }
+
+  restart() {
+    const pin: Pin = <Pin>(this.level.getActor('pin'));
+    if (pin) {
+      this.level.removeActor(pin);
+    }
+    const circle: Circle = <Circle>(this.level.getActor('circle'));
+    if (circle) {
+      this.level.removeActor(circle);
+    }
+    this.initPinPosition();
   }
 
   tick(renderer: Renderer, delta: number) {

@@ -111,8 +111,8 @@ export class Circle extends Actor {
 
     for (let i = 0; i < map.wallTiles.length - 1; i += 1) {
       const tile = map.wallTiles[i];
-      const distX = Math.abs(mapPosition.x - tile.sceneObject.position.x);
-      const distY = Math.abs(mapPosition.y - tile.sceneObject.position.y);
+      const distX = Math.abs(mapPosition.x - tile.objectWrapper.position.x);
+      const distY = Math.abs(mapPosition.y - tile.objectWrapper.position.y);
 
       if (distX > map.tileWidth + this.radius) continue;
       if (distY > map.tileHeight + this.radius) continue;
@@ -136,6 +136,6 @@ export class Circle extends Actor {
   }
 
   destroySequence() {
-    // this.game.leve
+    this.game.restart()
   }
 }

@@ -10,6 +10,7 @@ export class StarTile extends DefaultTile {
     const texture = loader.load('assets/star.png')
     const material = new SpriteMaterial({ transparent: true, opacity: 1, map: texture });
     this.sceneObject = new Sprite(material);
+    // this.sceneObject.layers.toggle(this.game.BLOOM_SCENE);
     this.objectWrapper.add(this.sceneObject);
   }
 }
