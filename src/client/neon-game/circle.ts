@@ -159,6 +159,27 @@ export class Circle extends Actor {
         break;
       }
     }
+
+    if (map.finishTile) {
+      const distX = Math.abs(mapPosition.x - map.finishTile.objectWrapper.position.x);
+      const distY = Math.abs(mapPosition.y - map.finishTile.objectWrapper.position.y);
+
+      if (distX < map.tileWidth + this.radius && distY < map.tileHeight + this.radius) {
+        if (distX <= map.tileWidth / 2) {
+          this.finishSequence();
+          return;
+        } else if (distY <= map.tileHeight / 2) {
+          this.finishSequence();
+          return;
+        } else {
+          const dx = distX - (map.tileWidth / 2);
+          const dy = distY - (map.tileHeight / 2);
+          if (dx * dx + dy * dy <= this.radius * this.radius) {
+            this.finishSequence();
+          }
+        }
+      };      
+    }
   }
 
   destroySequence() {
@@ -168,5 +189,9 @@ export class Circle extends Actor {
   starCollisionSequence(tile: StarTile) {
     tile.collect();
     this.game.state.currentLevelStars += 1;
+  }
+
+  finishSequence() {
+    this.game.restart()
   }
 }

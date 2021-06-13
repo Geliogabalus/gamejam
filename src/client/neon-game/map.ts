@@ -31,6 +31,8 @@ export class Map extends Actor {
 
   starTiles: StarTile[] = [];
 
+  finishTile!: FinishTile;
+
   constructor(name: string, game: Game, width: number, height: number, origin: Vector2) {
     super(name, game);
     this.width = width;
@@ -91,6 +93,10 @@ export class Map extends Actor {
 
     if (type === TileType.STAR) {
       this.starTiles.push(<StarTile>tile);
+    }
+
+    if (type === TileType.FINISH) {
+      this.finishTile = tile;
     }
 
     if (type === TileType.START) {
