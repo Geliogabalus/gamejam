@@ -6,15 +6,15 @@ import {
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
+import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
-import { Field } from '../neon-game/field';
 import { Circle } from '../neon-game/circle';
 import { Pin } from '../neon-game/pin';
 import { Controls } from './controls/controls';
 import { Gui } from './gui/gui';
 import { Level } from './level';
-import { LevelBuilder } from '../neon-game/level-builder';
 import { Map } from '../neon-game/map';
+import { LevelBuilder } from '../neon-game/level-builder';
 
 export interface GameSettings {
   cameraType?: 'perspective' | 'orthographic',
@@ -44,6 +44,8 @@ export class Game {
 
   private bloomComposer: EffectComposer;
 
+  private glitchPass: GlitchPass;
+
   private bloomLayer = new Layers();
 
   readonly materials: { [key: string]: Material } = {};
@@ -52,9 +54,13 @@ export class Game {
 
   readonly darkLineMaterial = new THREE.LineBasicMaterial({ color: 'black' });
 
+  glitching = false;
+
   basePlane: Mesh;
 
   map!: Map;
+
+  pinToggled = false;
 
   readonly state: { [key: string]: any } = {
     circleSpeed: 20,
@@ -98,6 +104,8 @@ export class Game {
     this.bloomComposer.addPass(renderScene);
     this.bloomComposer.addPass(bloomPass);
 
+    this.glitchPass = new GlitchPass();
+
     const finalPass = new ShaderPass(
       new THREE.ShaderMaterial({
         uniforms: {
@@ -128,6 +136,7 @@ export class Game {
     this.finalComposer = new EffectComposer(this.renderer);
     this.finalComposer.addPass(renderScene);
     this.finalComposer.addPass(finalPass);
+    // this.finalComposer.addPass(this.glitchPass);
     // Отключение изменения размера экрана
     /* const onWindowResize = () => {
       const aspect = window.innerWidth / window.innerHeight;
@@ -146,29 +155,20 @@ export class Game {
   public init() {
     this.camera.position.z = 10;
 
-    const field: Field = new Field('background', this, 'assets/background.png');
-    field.sceneObject.scale.x = this.width;
-    field.sceneObject.scale.y = this.height;
-    // this.level.addActor(field);
+    LevelBuilder.loadMap('map.png', this);
+  }
 
+  initPinPosition(position: Vector3) {
     const pin: Pin = new Pin('pin', this, 'assets/pin.png');
     pin.sceneObject.scale.x = 1;
     pin.sceneObject.scale.y = 1;
     this.level.addActor(pin);
 
-    const circle: Circle = new Circle('circle', this, 'assets/circle.png');
-    circle.sceneObject.scale.x = 2;
-    circle.sceneObject.scale.y = 2;
+    const circle: Circle = new Circle('circle', this, 1);
     circle.sceneObject.position.x = 5;
     this.level.addActor(circle);
 
     pin.attachCircle(circle);
-
-    LevelBuilder.loadMap('map.png', this);
-  }
-
-  initPinPosition(position: Vector3) {
-    const pin = this.currentLevel.getActor('pin');
     pin.sceneObject.position.set(position.x, position.y, 0);
   }
 
@@ -182,20 +182,13 @@ export class Game {
     this.finalComposer.render();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onLeftMouseButtonClick(point: Vector3) {
     const pin: Pin = <Pin>(this.currentLevel.getActor('pin'));
     if (pin != null) {
       pin.releaseCircle();
       this.currentLevel.removeActor(pin);
-    } else {
-      const newPin: Pin = new Pin('pin', this, 'assets/pin.png');
-      newPin.sceneObject.scale.x = 1;
-      newPin.sceneObject.scale.y = 1;
-      newPin.sceneObject.position.set(point.x, point.y, 0);
-      this.currentLevel.addActor(newPin);
-
-      const circle = <Circle>(this.currentLevel.getActor('circle'));
-      newPin.attachCircle(circle);
+      this.pinToggled = true;
     }
   }
 

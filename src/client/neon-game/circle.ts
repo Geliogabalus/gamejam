@@ -1,8 +1,12 @@
-import { Vector2, Vector3 } from 'three';
-import { Actor2D } from '../core/actors/actor-2d';
+import {
+  CircleBufferGeometry,
+  Mesh, MeshBasicMaterial, TextureLoader, Vector2, Vector3,
+} from 'three';
+import { Actor } from '../core/actors/actor';
 import { Binding } from './binding';
+import type { Game } from '../core/game';
 
-export class Circle extends Actor2D {
+export class Circle extends Actor {
   attached: boolean = false;
 
   binded: boolean = true;
@@ -12,6 +16,22 @@ export class Circle extends Actor2D {
   direction: Vector2 = new Vector2(0, 0);
 
   binding: Binding | null = null;
+
+  radius: number;
+
+  constructor(name: string, game: Game, radius: number) {
+    super(name, game);
+    this.radius = radius;
+
+    const texture = new TextureLoader().load('assets/circle.png');
+    const material: MeshBasicMaterial = new MeshBasicMaterial({
+      visible: true,
+      map: texture,
+      transparent: true,
+    });
+    const circleMesh: CircleBufferGeometry = new CircleBufferGeometry(this.radius, 10);
+    this.sceneObject = new Mesh(circleMesh, material);
+  }
 
   attach() {
     this.attached = true;
@@ -58,6 +78,7 @@ export class Circle extends Actor2D {
   tick(delta: number) {
     const speed = this.game.state.circleSpeed * delta;
 
+    // Перемещение
     if (this.attached) {
       /* if (this.direction.x === 0 && this.direction.y === 0) {
         this.binded = true;
@@ -78,5 +99,43 @@ export class Circle extends Actor2D {
       this.sceneObject.translateX(this.direction.x * speed);
       this.sceneObject.translateY(this.direction.y * speed);
     }
+
+    // Проверка взаимодействий
+    const { map } = this.game;
+    const worldPosition = new Vector3(); this.sceneObject.getWorldPosition(worldPosition);
+    const worldScale = new Vector3(); this.sceneObject.getWorldScale(worldScale);
+
+    const mapPosition = new Vector2();
+    mapPosition.x = worldPosition.x - map.origin.x;
+    mapPosition.y = worldPosition.y - map.origin.y;
+
+    for (let i = 0; i < map.wallTiles.length - 1; i += 1) {
+      const tile = map.wallTiles[i];
+      const distX = Math.abs(mapPosition.x - tile.sceneObject.position.x);
+      const distY = Math.abs(mapPosition.y - tile.sceneObject.position.y);
+
+      if (distX > map.tileWidth + this.radius) continue;
+      if (distY > map.tileHeight + this.radius) continue;
+
+      if (distX <= map.tileWidth / 2) {
+        this.destroySequence();
+        break;
+      }
+      if (distY <= map.tileHeight / 2) {
+        this.destroySequence();
+        break;
+      }
+
+      const dx = distX - (map.tileWidth / 2);
+      const dy = distY - (map.tileHeight / 2);
+      if (dx * dx + dy * dy <= this.radius * this.radius) {
+        this.destroySequence();
+        break;
+      }
+    }
+  }
+
+  destroySequence() {
+    // this.game.leve
   }
 }

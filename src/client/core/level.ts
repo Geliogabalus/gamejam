@@ -7,6 +7,8 @@ import type { Game } from './game';
 export class Level {
   private actors: { [key: string]: Actor } = {};
 
+  actorsByObjectUuid: { [key: string]: Actor } = {};
+
   private game: Game;
 
   constructor(game: Game) {
@@ -15,6 +17,7 @@ export class Level {
 
   addActor(actor: Actor) {
     this.actors[actor.name] = actor;
+    this.actorsByObjectUuid[actor.sceneObject.uuid] = actor;
 
     if (actor.sceneObject) {
       this.game.scene.add(actor.sceneObject);
@@ -26,6 +29,7 @@ export class Level {
       this.game.scene.remove(actor.sceneObject);
     }
 
+    delete this.actorsByObjectUuid[actor.sceneObject.uuid];
     delete this.actors[actor.name];
   }
 
@@ -53,5 +57,15 @@ export class Level {
       result.push(actor);
     });
     return result;
+  }
+
+  addActorToCheckControls(actor: Actor) {
+    this.actors[actor.name] = actor;
+    this.actorsByObjectUuid[actor.sceneObject.uuid] = actor;
+  }
+
+  removeActorToCheckControls(actor: Actor) {
+    delete this.actors[actor.name];
+    delete this.actorsByObjectUuid[actor.sceneObject.uuid];
   }
 }

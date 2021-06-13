@@ -1,9 +1,14 @@
 import {
-  Group, Mesh, MeshBasicMaterial, PlaneGeometry, Sprite, SpriteMaterial, Vector2,
+  Group, Vector2,
 } from 'three';
 import { Actor } from '../core/actors/actor';
 import type { Game } from '../core/game';
 import { Tile, TileType } from './tile';
+import { DefaultTile } from './tiles/default-tile';
+import { FinishTile } from './tiles/finish-tile';
+import { StarTile } from './tiles/star-tile';
+import { StartTile } from './tiles/start-tile';
+import { WallTile } from './tiles/wall-tile';
 
 export class Map extends Actor {
   width: number;
@@ -21,6 +26,8 @@ export class Map extends Actor {
   tileWidth: number;
 
   tileHeight: number;
+
+  wallTiles: Tile[] = [];
 
   constructor(name: string, game: Game, width: number, height: number, origin: Vector2) {
     super(name, game);
@@ -43,22 +50,48 @@ export class Map extends Actor {
   }
 
   addTile(i: number, j: number, type: TileType, code: string) {
-    const tile = new Tile(`tile${Math.random()}`, this.game, type, code);
+    let tile: Tile;
+
+    switch (type) {
+      case TileType.STAR:
+        tile = new StarTile(`tile${Math.random()}`, this.game, type, code);
+        break;
+      case TileType.START:
+        tile = new StartTile(`tile${Math.random()}`, this.game, type, code);
+        break;
+      case TileType.FINISH:
+        tile = new FinishTile(`tile${Math.random()}`, this.game, type, code);
+        break;
+      case TileType.WALL:
+        tile = new WallTile(`tile${Math.random()}`, this.game, type, code);
+        break;
+      case TileType.DEFAULT:
+        tile = new DefaultTile(`tile${Math.random()}`, this.game, type, code);
+        break;
+      default:
+        tile = new DefaultTile(`tile${Math.random()}`, this.game, type, code);
+        break;
+    }
     this.tileMap[i][j] = tile;
-    tile.sceneObject.position.x = (i * this.tileWidth) + (this.tileWidth / 2);
-    tile.sceneObject.position.y = -((j * this.tileHeight) + (this.tileHeight / 2));
-    tile.sceneObject.scale.x = this.tileWidth;
-    tile.sceneObject.scale.y = this.tileHeight;
-    this.sceneObject.add(tile.sceneObject);
+    tile.objectWrapper.position.x = (i * this.tileWidth) + (this.tileWidth / 2);
+    tile.objectWrapper.position.y = -((j * this.tileHeight) + (this.tileHeight / 2));
+    tile.objectWrapper.scale.x = this.tileWidth;
+    tile.objectWrapper.scale.y = this.tileHeight;
+    this.sceneObject.add(tile.objectWrapper);
+    this.game.currentLevel.addActorToCheckControls(tile);
 
     // const plane = new Mesh(new PlaneGeometry(1, 1), new MeshBasicMaterial({ wireframe: true, color: 0xff0000 }));
     // tile.sceneObject.add(plane);
 
+    if (type === TileType.WALL) {
+      this.wallTiles.push(tile);
+    }
+
     if (type === TileType.START) {
       this.startTile = tile;
       const constStartPos = this.sceneObject.position.clone();
-      constStartPos.setX(constStartPos.x + tile.sceneObject.position.x);
-      constStartPos.setY(constStartPos.y + tile.sceneObject.position.y);
+      constStartPos.setX(constStartPos.x + tile.objectWrapper.position.x);
+      constStartPos.setY(constStartPos.y + tile.objectWrapper.position.y);
       this.game.initPinPosition(constStartPos);
     }
   }

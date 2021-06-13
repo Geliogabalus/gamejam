@@ -27,14 +27,13 @@ export class Controls {
       this.game.onLeftMouseButtonClick(baseIntersect.point);
     }
 
-    const currentLevelActors = this.game.currentLevel.allActors;
     const intersects = this.raycaster.intersectObjects(this.game.currentLevel.allObjects, true);
     if (intersects.length > 0) {
       intersects.sort((a, b) => a.distance - b.distance);
       const intersection = intersects[0];
 
       if (intersection && intersection.object) {
-        const clickedActor = currentLevelActors.find((actor) => actor.sceneObject.uuid === intersection.object.uuid);
+        const clickedActor = this.game.currentLevel.actorsByObjectUuid[intersection.object.uuid];
         if (clickedActor) {
           if (event.button === 0) {
             clickedActor.onLeftMouseButtonClick(intersection.point);
