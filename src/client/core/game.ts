@@ -154,13 +154,12 @@ export class Game {
   }
 
   private playMusic() {
-    const sound = createSound('assets/music/level1.wav', 0.1);
-    sound.play().then(() => this.playMusic());
+    const sound = createSound('assets/music/level1.wav', 0.1, true);
+    sound.play();
   }
 
   public init() {
-    const sound = createSound('assets/music/level1.wav', 0.1);
-    sound.play();
+    this.playMusic();
     this.camera.position.z = 10;
 
     LevelBuilder.loadMap('map.png', this);

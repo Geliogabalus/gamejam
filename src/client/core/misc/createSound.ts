@@ -1,6 +1,7 @@
-export const createSound = (src: string, volume: number = 1) => {
+export const createSound = (src: string, volume = 1, loop = false) => {
   const sound = document.createElement('audio');
   sound.volume = volume;
+  sound.loop = loop;
   sound.src = src;
   sound.setAttribute('preload', 'auto');
   sound.setAttribute('controls', 'none');
