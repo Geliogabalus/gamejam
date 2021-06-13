@@ -45,15 +45,16 @@ export class Map extends Actor {
   addTile(i: number, j: number, type: TileType, code: string) {
     const tile = new Tile(`tile${Math.random()}`, this.game, type, code);
     this.tileMap[i][j] = tile;
-    tile.sceneObject.position.x = (i * this.tileWidth) + (this.tileWidth);
-    tile.sceneObject.position.y = -((j * this.tileHeight) + (this.tileHeight));
+    tile.sceneObject.position.x = (i * this.tileWidth) + (this.tileWidth / 2);
+    tile.sceneObject.position.y = -((j * this.tileHeight) + (this.tileHeight / 2));
     tile.sceneObject.scale.x = this.tileWidth;
     tile.sceneObject.scale.y = this.tileHeight;
     this.sceneObject.add(tile.sceneObject);
 
-    const plane = new Mesh(new PlaneGeometry(1, 1), new MeshBasicMaterial({ wireframe: true, color: 0xff0000 }));
-    tile.sceneObject.add(plane);
+    // const plane = new Mesh(new PlaneGeometry(1, 1), new MeshBasicMaterial({ wireframe: true, color: 0xff0000 }));
+    // tile.sceneObject.add(plane);
 
+    console.log(type);
     if (type === TileType.START) {
       this.startTile = tile;
       const constStartPos = this.sceneObject.position.clone();
