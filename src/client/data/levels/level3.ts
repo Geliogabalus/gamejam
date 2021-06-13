@@ -19,7 +19,7 @@ export const level3: LevelData = [
   '                                                                              WW',
   '                                                                        G     WW',
   '                               W                                               W',
-  '   S                          WWW                                              W',
+  '         S                    WWW                                              W',
   '                             WWWW                                             WW',
   '                             WWW                      WW        WW            WW',
   '                             WWW                    WWWWW      WWWW           WW',

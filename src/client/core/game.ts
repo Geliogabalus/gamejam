@@ -15,6 +15,7 @@ import { Gui } from './gui/gui';
 import { Level } from './level';
 import { Map } from '../neon-game/map';
 import { LevelBuilder } from '../neon-game/level-builder';
+import { createSound } from './misc/createSound';
 
 export interface GameSettings {
   cameraType?: 'perspective' | 'orthographic',
@@ -152,7 +153,14 @@ export class Game {
     window.addEventListener('resize', onWindowResize); */
   }
 
+  private playMusic() {
+    const sound = createSound('assets/music/level1.wav', 0.1);
+    sound.play().then(() => this.playMusic());
+  }
+
   public init() {
+    const sound = createSound('assets/music/level1.wav', 0.1);
+    sound.play();
     this.camera.position.z = 10;
 
     LevelBuilder.loadMap('map.png', this);
