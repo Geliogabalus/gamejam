@@ -12,7 +12,7 @@ export class StarTile extends DefaultTile {
     super(name, game, type, code);
     let loader = new TextureLoader();
     const texture = loader.load('assets/star.png')
-    const material = new SpriteMaterial({ transparent: true, opacity: 1, map: texture });
+    const material = new SpriteMaterial({ map: texture, alphaTest: 0 });
     this.sceneObject = new Sprite(material);
     // this.sceneObject.layers.toggle(this.game.BLOOM_SCENE);
     this.objectWrapper.add(this.sceneObject);
