@@ -1,9 +1,26 @@
-import { Vector3 } from 'three';
-import { Actor2D } from '../core/actors/actor-2d';
+import { Actor } from '../core/actors/actor';
+import { Game } from 'core/game';
+import { CircleBufferGeometry, Mesh, MeshBasicMaterial, TextureLoader, Vector3 } from 'three';
 import type { Circle } from './circle';
 
-export class Pin extends Actor2D {
+export class Pin extends Actor {
   activeCircle: Circle | null = null;
+
+  radius: number;
+
+  constructor(name: string, game: Game, radius: number) {
+    super(name, game);
+    this.radius = radius;
+
+    const texture = new TextureLoader().load('assets/pin.png');
+    const material: MeshBasicMaterial = new MeshBasicMaterial({
+      visible: true,
+      map: texture,
+      transparent: true,
+    });
+    const circleMesh: CircleBufferGeometry = new CircleBufferGeometry(this.radius, 10);
+    this.sceneObject = new Mesh(circleMesh, material);
+  }
 
   attachCircle(circle: Circle) {
     this.activeCircle = circle;

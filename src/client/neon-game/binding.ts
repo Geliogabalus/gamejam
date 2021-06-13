@@ -13,7 +13,7 @@ export class Binding extends Actor {
 
   changeAmplitude: number;
 
-  changeSpeed = 7;
+  changeSpeed = 3;
 
   lines: Line[] = [];
 

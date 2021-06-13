@@ -5,6 +5,7 @@ import {
 import { Actor } from '../core/actors/actor';
 import { Binding } from './binding';
 import type { Game } from '../core/game';
+import { StarTile } from './tiles/star-tile';
 
 export class Circle extends Actor {
   attached: boolean = false;
@@ -133,9 +134,39 @@ export class Circle extends Actor {
         break;
       }
     }
+
+    for (let i = 0; i < map.starTiles.filter(t => !t.collected).length - 1; i += 1) {
+      const tile = map.starTiles[i];
+      const distX = Math.abs(mapPosition.x - tile.objectWrapper.position.x);
+      const distY = Math.abs(mapPosition.y - tile.objectWrapper.position.y);
+
+      if (distX > map.tileWidth + this.radius) continue;
+      if (distY > map.tileHeight + this.radius) continue;
+
+      if (distX <= map.tileWidth / 2) {
+        this.starCollisionSequence(tile);
+        break;
+      }
+      if (distY <= map.tileHeight / 2) {
+        this.starCollisionSequence(tile);
+        break;
+      }
+
+      const dx = distX - (map.tileWidth / 2);
+      const dy = distY - (map.tileHeight / 2);
+      if (dx * dx + dy * dy <= this.radius * this.radius) {
+        this.starCollisionSequence(tile);
+        break;
+      }
+    }
   }
 
   destroySequence() {
     this.game.restart()
+  }
+
+  starCollisionSequence(tile: StarTile) {
+    tile.collect();
+    this.game.state.currentLevelStars += 1;
   }
 }

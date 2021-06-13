@@ -63,7 +63,8 @@ export class Game {
   startPosition = new Vector2();
 
   readonly state: { [key: string]: any } = {
-    circleSpeed: 20,
+    circleSpeed: 10,
+    currentLevelStars: 0
   };
 
   constructor(settings: GameSettings) {
@@ -159,7 +160,7 @@ export class Game {
   }
 
   initPinPosition() {
-    const pin: Pin = new Pin('pin', this, 'assets/pin.png');
+    const pin: Pin = new Pin('pin', this, 0.5);
     pin.sceneObject.scale.x = 1;
     pin.sceneObject.scale.y = 1;
     this.level.addActor(pin);
@@ -173,6 +174,9 @@ export class Game {
   }
 
   restart() {
+    this.state.currentLevelStars = 0;
+    this.map.starTiles.forEach(t => t.reset());
+
     const pin: Pin = <Pin>(this.level.getActor('pin'));
     if (pin) {
       this.level.removeActor(pin);
@@ -195,7 +199,7 @@ export class Game {
   }
 
   placePin(point: Vector3) {
-    const newPin: Pin = new Pin('pin', this, 'assets/pin.png');
+    const newPin: Pin = new Pin('pin', this, 0.5);
     newPin.sceneObject.scale.x = 1;
     newPin.sceneObject.scale.y = 1;
     newPin.sceneObject.position.set(point.x, point.y, 0);
