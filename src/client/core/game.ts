@@ -182,21 +182,32 @@ export class Game {
     this.finalComposer.render();
   }
 
-  onLeftMouseButtonClick(point: Vector3) {
+  placePin(point: Vector3) {
+    const newPin: Pin = new Pin('pin', this, 'assets/pin.png');
+    newPin.sceneObject.scale.x = 1;
+    newPin.sceneObject.scale.y = 1;
+    newPin.sceneObject.position.set(point.x, point.y, 0);
+    this.currentLevel.addActor(newPin);
+
+    const circle = <Circle>(this.currentLevel.getActor('circle'));
+    newPin.attachCircle(circle);
+  }
+
+  releasePin() {
     const pin: Pin = <Pin>(this.currentLevel.getActor('pin'));
-    if (pin != null) {
+    if (pin) {
       pin.releaseCircle();
       this.currentLevel.removeActor(pin);
-    } else {
-      const newPin: Pin = new Pin('pin', this, 'assets/pin.png');
-      newPin.sceneObject.scale.x = 1;
-      newPin.sceneObject.scale.y = 1;
-      newPin.sceneObject.position.set(point.x, point.y, 0);
-      this.currentLevel.addActor(newPin);
-
-      const circle = <Circle>(this.currentLevel.getActor('circle'));
-      newPin.attachCircle(circle);
     }
+  }
+
+  onLeftMouseButtonUp() {
+    this.releasePin();
+  }
+
+  onLeftMouseButtonDown(point: Vector3) {
+    this.releasePin();
+    this.placePin(point);
   }
 
   renderBloom() {

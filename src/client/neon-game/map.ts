@@ -1,6 +1,4 @@
-import {
-  Group, Mesh, MeshBasicMaterial, PlaneGeometry, Sprite, SpriteMaterial, Vector2,
-} from 'three';
+import { Group, Vector2 } from 'three';
 import { Actor } from '../core/actors/actor';
 import type { Game } from '../core/game';
 import { Tile, TileType } from './tile';
@@ -50,9 +48,6 @@ export class Map extends Actor {
     tile.sceneObject.scale.x = this.tileWidth;
     tile.sceneObject.scale.y = this.tileHeight;
     this.sceneObject.add(tile.sceneObject);
-
-    // const plane = new Mesh(new PlaneGeometry(1, 1), new MeshBasicMaterial({ wireframe: true, color: 0xff0000 }));
-    // tile.sceneObject.add(plane);
 
     if (type === TileType.START) {
       this.startTile = tile;

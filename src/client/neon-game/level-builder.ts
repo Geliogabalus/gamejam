@@ -45,6 +45,7 @@ export class LevelBuilder {
   static loadMap(mapName: string, game: Game) {
     const level = addLevelBorders(level4);
     const map = new Map('map', game, level[0].length, level.length, new Vector2(-80, 37));
+
     game.currentLevel.addActor(map);
 
     const squareMap = getWallMap(level);

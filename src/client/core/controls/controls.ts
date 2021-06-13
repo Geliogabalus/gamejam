@@ -13,10 +13,17 @@ export class Controls {
 
     document.addEventListener('pointermove', this.onPointerMove.bind(this));
 
-    document.addEventListener('mousedown', this.onClick.bind(this));
+    document.addEventListener('mousedown', this.onMouseDown.bind(this));
+    document.addEventListener('mouseup', this.onMouseUp.bind(this));
   }
 
-  onClick(event: MouseEvent) {
+  onMouseUp(event: MouseEvent) {
+    if (event.button === 0) {
+      this.game.onLeftMouseButtonUp();
+    }
+  }
+
+  onMouseDown(event: MouseEvent) {
     this.pointer.x = (event.clientX / (window.innerHeight * (16 / 9))) * 2 - 1;
     this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -24,7 +31,7 @@ export class Controls {
 
     const baseIntersect = this.raycaster.intersectObject(this.game.basePlane)[0];
     if (event.button === 0) {
-      this.game.onLeftMouseButtonClick(baseIntersect.point);
+      this.game.onLeftMouseButtonDown(baseIntersect.point);
     }
 
     const currentLevelActors = this.game.currentLevel.allActors;
