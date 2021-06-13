@@ -6,6 +6,7 @@ import { Actor } from '../core/actors/actor';
 import { Binding } from './binding';
 import type { Game } from '../core/game';
 import { StarTile } from './tiles/star-tile';
+import { complete, crash, pickup } from '../core/misc/createSound';
 
 export class Circle extends Actor {
   attached: boolean = false;
@@ -135,7 +136,7 @@ export class Circle extends Actor {
       }
     }
 
-    for (let i = 0; i < map.starTiles.length - 1; i += 1) {    
+    for (let i = 0; i < map.starTiles.length - 1; i += 1) {
       const tile = map.starTiles[i];
       if (tile.collected) continue;
 
@@ -180,20 +181,23 @@ export class Circle extends Actor {
             this.finishSequence();
           }
         }
-      };      
+      };
     }
   }
 
   destroySequence() {
-    this.game.restart()
+    this.game.restart();
+    crash.play();
   }
 
   starCollisionSequence(tile: StarTile) {
     tile.collect();
+    pickup.play();
     this.game.state.currentLevelStars += 1;
   }
 
   finishSequence() {
-    this.game.restart()
+    complete.play();
+    this.game.restart();
   }
 }

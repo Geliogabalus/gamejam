@@ -15,6 +15,7 @@ import { Gui } from './gui/gui';
 import { Level } from './level';
 import { Map } from '../neon-game/map';
 import { LevelBuilder } from '../neon-game/level-builder';
+import { createSound } from './misc/createSound';
 import { Actor2D } from './actors/actor-2d';
 import { Builder } from './misc/builder';
 import { Button } from './actors/button';
@@ -186,8 +187,14 @@ export class Game {
     // document.body.style.cursor = "pointer"
   }
 
+  private playMusic() {
+    const sound = createSound('assets/music/level1.wav', 0.1, true);
+    sound.play();
+  }
+
   public createScene() {
     this.level.clear();
+    // this.playMusic();
 
     this.basePlane = new Mesh(new THREE.PlaneGeometry(1000, 1000), new MeshBasicMaterial());
     this.basePlane.visible = false;
@@ -248,11 +255,11 @@ export class Game {
       pin.sceneObject.scale.x = 1;
       pin.sceneObject.scale.y = 1;
       this.level.addActor(pin);
-  
+
       const circle: Circle = new Circle('circle', this, 1);
       circle.sceneObject.position.x = 5;
       this.level.addActor(circle);
-  
+
       pin.attachCircle(circle);
       pin.sceneObject.position.set(this.startPosition.x, this.startPosition.y, 0);
     }, 200)
